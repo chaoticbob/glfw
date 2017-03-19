@@ -661,10 +661,8 @@ public:
 class BoingApp : public glfw::Application {
 public:
   BoingApp() : glfw::Application() {
-    SetAutoPollEvents(false);
-
     mWindow = new BoingWindow();
-    AddWindow( std::unique_ptr<glfw::Window>( mWindow ) );
+    AddWindow( mWindow );
   }
 
   virtual void EventLoop() override {
@@ -673,7 +671,6 @@ public:
 
     // Swap buffers
     mWindow->SwapBuffers();
-    PollEvents();
 
     // Check if we are still running
     if (mWindow->WindowShouldClose()) {

@@ -994,8 +994,6 @@ public:
 class ParticlesApp : public glfw::Application {
 public:
   ParticlesApp(int argc, char** argv) : glfw::Application() {
-    SetAutoPollEvents(false);
-
     int ch, width, height;
     thrd_t physics_thread = 0;
     GLFWmonitor* monitor = NULL;
@@ -1038,7 +1036,7 @@ public:
     }
 
     mWindow = new ParticlesWindow(width, height, "Particle Engine", monitor, NULL);
-    AddWindow(std::unique_ptr<glfw::Window>(mWindow));
+    AddWindow(mWindow);
 
     if (monitor) {
       mWindow->SetInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -1071,7 +1069,6 @@ public:
 
     // Swap buffers
     mWindow->SwapBuffers();
-    PollEvents();
 
     // Check if we are still running
     if (mWindow->WindowShouldClose()) {

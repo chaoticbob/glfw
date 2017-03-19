@@ -67,7 +67,7 @@ static void error_callback(int error, const char* description)
 
 class SimpleWindow : public glfw::Window {
 public:
-  SimpleWindow() : glfw::Window(640, 480, "Simple example") {
+  SimpleWindow(const std::string& title) : glfw::Window(640, 480, title) {
     MakeContextCurrent();
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
     SwapInterval(1);
@@ -80,6 +80,8 @@ public:
   }
 
   void Init() {
+    MakeContextCurrent();
+
     glGenBuffers(1, &vertex_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -110,6 +112,8 @@ public:
   }
 
   void Draw() {
+    MakeContextCurrent();
+
     int width = GetWidth();
     int height = GetHeight();
     float ratio = width / (float) height;
@@ -144,22 +148,26 @@ public:
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
-    mWindow = new SimpleWindow();
-    mWindow->Init();
-    AddWindow(mWindow);
+    mWindow1 = new SimpleWindow("Simple window 1");
+    mWindow1->Init();
+    AddWindow(mWindow1);
+
+    mWindow2 = new SimpleWindow("Simple window 2");
+    mWindow2->Init();
+    AddWindow(mWindow2);
   }
 
   virtual void EventLoop() override {
-    mWindow->Draw();
-    mWindow->SwapBuffers();
+    mWindow1->Draw();
+    mWindow2->Draw();
 
-    if (mWindow->WindowShouldClose()) {
-      Exit();
-    }
+    mWindow1->SwapBuffers();
+    mWindow2->SwapBuffers();
   }
 
 private:
-  SimpleWindow* mWindow = nullptr;
+  SimpleWindow* mWindow1 = nullptr;
+  SimpleWindow* mWindow2 = nullptr;
 };
 
 int main(void)

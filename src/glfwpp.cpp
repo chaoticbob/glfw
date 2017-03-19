@@ -231,10 +231,14 @@ void EventManager::DropCallback(GLFWwindow* glfw_window, int count, const char**
 // =============================================================================
 // Window
 // =============================================================================
-Window::Window(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share)
+Window::Window(int width, int height, const std::string& title, GLFWmonitor* monitor, GLFWwindow* share)
   : m_width(width), m_height(height)
 {
-  m_glfw_window = glfwCreateWindow(width, height, title, monitor, share);
+  if (! glfwInit()) {
+    exit(EXIT_FAILURE);
+  }
+
+  m_glfw_window = glfwCreateWindow(width, height, title.c_str(), monitor, share);
   s_event_manager.RegisterWindow(m_glfw_window, this);
 
   glfwMakeContextCurrent(m_glfw_window);
@@ -242,9 +246,7 @@ Window::Window(int width, int height, const char* title, GLFWmonitor* monitor, G
 
 Window::~Window()
 {
-  glfwDestroyWindow(m_glfw_window);
-  s_event_manager.UnregisterWindow(m_glfw_window);
-  m_glfw_window = nullptr;
+  Close();
 }
 
 void Window::SetApplication(glfw::Application* application)
@@ -274,53 +276,109 @@ int Window::GetHeight() const
   return m_height;
 }
 
+bool Window::IsValid() const
+{
+  return m_glfw_window != nullptr;
+}
+
+void Window::Close()
+{
+  if (m_glfw_window != nullptr) {
+    glfwDestroyWindow(m_glfw_window);
+    s_event_manager.UnregisterWindow(m_glfw_window);
+    m_glfw_window = nullptr;
+    m_width = 0;
+    m_height = 0;
+  }
+}
+
 int Window::WindowShouldClose()
 {
+  if (! IsValid()) {
+    return GLFW_TRUE;
+  }
+
   return glfwWindowShouldClose(m_glfw_window);
 }
 
 void Window::SetWindowShouldClose(int value)
 {
+  if (! IsValid()) {
+    return;
+  }
+
   glfwSetWindowShouldClose(m_glfw_window, value);
 }
 
 void Window::SetWindowTitle(const char* title)
 {
+  if (! IsValid()) {
+    return;
+  }
+
   glfwSetWindowTitle(m_glfw_window, title);
 }
 
 void Window::SetWindowIcon(int count, const GLFWimage* images)
 {
+  if (! IsValid()) {
+    return;
+  }
+
   glfwSetWindowIcon(m_glfw_window, count, images);
 }
 
 void Window::GetWindowPos(int* xpos, int* ypos)
 {
+  if (! IsValid()) {
+    return;
+  }
+
   glfwGetWindowPos(m_glfw_window, xpos, ypos);
 }
 
 void Window::SetWindowPos(int xpos, int ypos)
 {
+  if (! IsValid()) {
+    return;
+  }
+
   glfwSetWindowPos(m_glfw_window, xpos, ypos);
 }
 
 void Window::GetWindowSize(int* width, int* height)
 {
+  if (! IsValid()) {
+    return;
+  }
+
   glfwGetWindowSize(m_glfw_window, width, height);
 }
 
 void Window::SetWindowSizeLimits(int minwidth, int minheight, int maxwidth, int maxheight)
 {
+  if (! IsValid()) {
+    return;
+  }
+
   glfwSetWindowSizeLimits(m_glfw_window, minwidth, minheight, maxwidth, maxheight);
 }
 
 void Window::SetWindowAspectRatio(int numer, int denom)
 {
+  if (! IsValid()) {
+    return;
+  }
+
   glfwSetWindowAspectRatio(m_glfw_window, numer, denom);
 }
 
 void Window::SetWindowSize(int width, int height)
 {
+  if (! IsValid()) {
+    return;
+  }
+
   m_width = width;
   m_height = height;
   glfwSetWindowSize(m_glfw_window, width, height);
@@ -328,52 +386,92 @@ void Window::SetWindowSize(int width, int height)
 
 void Window::GetFramebufferSize(int* width, int* height)
 {
+  if (! IsValid()) {
+    return;
+  }
+
   glfwGetFramebufferSize(m_glfw_window, width, height);
 }
 
 void Window::GetWindowFrameSize(int* left, int* top, int* right, int* bottom)
 {
+  if (! IsValid()) {
+    return;
+  }
+
   glfwGetWindowFrameSize(m_glfw_window, left, top, right, bottom);
 }
 
 void Window::IconifyWindow()
 {
+  if (! IsValid()) {
+    return;
+  }
+
   glfwIconifyWindow(m_glfw_window);
 }
 
 void Window::RestoreWindow()
 {
+  if (! IsValid()) {
+    return;
+  }
+
   glfwRestoreWindow(m_glfw_window);
 }
 
 void Window::MaximizeWindow()
 {
+  if (! IsValid()) {
+    return;
+  }
+
   glfwMaximizeWindow(m_glfw_window);
 }
 
 void Window::ShowWindow()
 {
+  if (! IsValid()) {
+    return;
+  }
+
   glfwShowWindow(m_glfw_window);
 }
 
 void Window::HideWindow()
 {
+  if (! IsValid()) {
+    return;
+  }
+
   glfwHideWindow(m_glfw_window);
 }
 
 void Window::FocusWindow()
 {
+  if (! IsValid()) {
+    return;
+  }
+
   glfwFocusWindow(m_glfw_window);
 }
 
 GLFWmonitor* Window::GetWindowMonitor()
 {
+  if (! IsValid()) {
+    return nullptr;
+  }
+
   return glfwGetWindowMonitor(m_glfw_window);
 }
 
-void Window::SetWindowMonitor(GLFWmonitor* monitor, int xpos, int ypos, int width, int height, int refreshRate)
+void Window::SetWindowMonitor(GLFWmonitor* monitor, int xpos, int ypos, int width, int height, int refresh_rate)
 {
-  glfwSetWindowMonitor(m_glfw_window, monitor, xpos, ypos, width, height, refreshRate);
+  if (! IsValid()) {
+    return;
+  }
+
+  glfwSetWindowMonitor(m_glfw_window, monitor, xpos, ypos, width, height, refresh_rate);
 }
 
 int Window::GetWindowAttrib(int attrib)
@@ -383,76 +481,177 @@ int Window::GetWindowAttrib(int attrib)
 
 void Window::SetWindowAttrib(int attrib, int value)
 {
+  if (! IsValid()) {
+    return;
+  }
+
   glfwSetWindowAttrib(m_glfw_window, attrib, value);
 }
 
 void Window::SetWindowUserPointer(void* pointer)
 {
-    return glfwSetWindowUserPointer(m_glfw_window, pointer);
+  if (! IsValid()) {
+    return;
+  }
+
+  glfwSetWindowUserPointer(m_glfw_window, pointer);
 }
 
 void* Window::GetWindowUserPointer()
 {
+  if (! IsValid()) {
+    return nullptr;
+  }
+
   return glfwGetWindowUserPointer(m_glfw_window);
+}
+
+void Window::PollEvents()
+{
+  if (! IsValid()) {
+    return;
+  }
+
+  MakeContextCurrent();
+  glfwPollEvents();
+}
+
+void Window::WaitEvents()
+{
+  if (! IsValid()) {
+    return;
+  }
+
+  MakeContextCurrent();
+  glfwWaitEvents();
+}
+
+void Window::WaitEventsTimeout(double timeout)
+{
+  if (! IsValid()) {
+    return;
+  }
+
+  MakeContextCurrent();
+  glfwWaitEventsTimeout(timeout);
+}
+
+void Window::PostEmptyEvent()
+{
+  if (! IsValid()) {
+    return;
+  }
+
+  MakeContextCurrent();
+  glfwPostEmptyEvent();
 }
 
 int Window::GetInputMode(int mode)
 {
+  if (! IsValid()) {
+    return GLFW_FALSE;
+  }
+
   return glfwGetInputMode(m_glfw_window, mode);
 }
 
 void Window::SetInputMode(int mode, int value)
 {
+  if (! IsValid()) {
+    return;
+  }
+
   glfwSetInputMode(m_glfw_window, mode, value);
 }
 
 int Window::GetKey(int key)
 {
+  if (! IsValid()) {
+    return GLFW_KEY_UNKNOWN;
+  }
+
   return glfwGetKey(m_glfw_window, key);
 }
 
 int Window::GetMouseButton(int button)
 {
+  if (! IsValid()) {
+    return GLFW_MOUSE_BUTTON_UNKNOWN;
+  }
+
   return glfwGetMouseButton(m_glfw_window, button);
 }
 
 void Window::GetCursorPos(double* xpos, double* ypos)
 {
+  if (! IsValid()) {
+    return;
+  }
+
   glfwGetCursorPos(m_glfw_window, xpos, ypos);
 }
 
 void Window::SetCursorPos(double xpos, double ypos)
 {
+  if (! IsValid()) {
+    return;
+  }
+
   glfwSetCursorPos(m_glfw_window, xpos, ypos);
 }
 
 void Window::SetCursor(GLFWcursor* cursor)
 {
+  if (! IsValid()) {
+    return;
+  }
+
   glfwSetCursor(m_glfw_window, cursor);
 }
 
 void Window::SetClipboardString(const char* string)
 {
+  if (! IsValid()) {
+    return;
+  }
+
   glfwSetClipboardString(m_glfw_window, string);
 }
 
 const char* Window::GetClipboardString()
 {
+  if (! IsValid()) {
+    return nullptr;
+  }
+
   return glfwGetClipboardString(m_glfw_window);
 }
 
 void Window::MakeContextCurrent() const
 {
+  if (! IsValid()) {
+    return;
+  }
+
   glfwMakeContextCurrent(m_glfw_window);
 }
 
 void Window::SwapBuffers() const
 {
+  if (! IsValid()) {
+    return;
+  }
+
+  MakeContextCurrent();
   glfwSwapBuffers(m_glfw_window);
 }
 
 void Window::SwapInterval(int interval) const
 {
+  if (! IsValid()) {
+    return;
+  }
+
   glfwSwapInterval(interval);
 }
 
@@ -462,31 +661,28 @@ void Window::SwapInterval(int interval) const
 Application::Application(bool owns_terminate)
   : m_owns_terminate(owns_terminate)
 {
-  if (m_owns_terminate) {
-    if (! glfwInit()) {
-      exit(EXIT_FAILURE);
-    }
-
-    glfwSetTime(0.0);
+  if (! glfwInit()) {
+    exit(EXIT_FAILURE);
   }
+
+  glfwSetTime(0.0);
 }
 
 Application::Application(glfw::Window* window, bool owns_terminate)
   : m_owns_terminate(owns_terminate)
 {
   AddWindow(window);
-  m_current_window = m_windows.back();
-}
-
-Application::Application(std::unique_ptr<glfw::Window> window, bool owns_terminate)
-  : m_owns_terminate(owns_terminate)
-{
-  AddWindow(window);
-  m_current_window = m_windows.back();
 }
 
 Application::~Application()
 {
+  for (auto& window : m_windows) { 
+    window->Close();
+    delete window;
+    window = nullptr;
+  }
+  m_windows.clear();
+
   if (m_owns_terminate) {
     glfwTerminate();
   }
@@ -504,19 +700,6 @@ void Application::AddWindow(glfw::Window* window)
   }
 }
 
-void Application::AddWindow(std::unique_ptr<glfw::Window>& window)
-{
-  auto it = std::find_if(std::begin(m_windows),
-                         std::end(m_windows),
-                         [&window](const glfw::Window* elem) -> bool {
-                             return window.get() == elem; });
-
-  if (it == std::end(m_windows)) {
-    m_windows.push_back(window.get());
-    m_owned_windows.push_back(std::move(window));
-  }
-}
-
 void Application::RemoveWindow(glfw::Window* window)
 {
   m_windows.erase(std::remove_if(std::begin(m_windows), 
@@ -524,11 +707,6 @@ void Application::RemoveWindow(glfw::Window* window)
                                   [window](const glfw::Window* elem) -> bool {
                                       return window == elem; }),
                   m_windows.end());
-}
-
-glfw::Window* Application::GetCurrentWindow() const
-{
-  return m_current_window;
 }
 
 bool Application::GetAutoPollEvents() const
@@ -541,23 +719,39 @@ void Application::SetAutoPollEvents(bool value)
   m_auto_poll_events = value;
 }
 
-void Application::PollEvents()
-{
-  glfwPollEvents();
-}
-
 int Application::Execute()
 {
   m_running = true;
   while (m_running) {
     EventLoop();
 
-    if (m_auto_poll_events && m_running) {
-      PollEvents();
+    if (! m_running) {
+      break;
     }
 
-    if (m_windows.empty() && m_exit_on_last_window_closed) {
-      m_running = false;
+    // Close or process events
+    bool has_close = false;
+    for (auto& window : m_windows) {
+      if (window->WindowShouldClose()) {
+        window->Close();
+        has_close = true;
+      }
+      else {
+        if (m_auto_poll_events) {
+          window->PollEvents();
+        }
+      }
+    }
+
+    if (m_exit_on_last_window_closed) {
+      bool all_closed = true;
+      for (auto& window : m_windows) {
+        if (window->IsValid()) {
+          all_closed = false;
+          break;
+        }
+      }
+      m_running = all_closed ? false : true;
     }
   }
 

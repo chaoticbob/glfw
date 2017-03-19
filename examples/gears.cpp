@@ -329,12 +329,10 @@ public:
 class GearsApp : public glfw::Application {
 public:
   GearsApp() : glfw::Application() {
-    SetAutoPollEvents(false);
-
     glfwWindowHint(GLFW_DEPTH_BITS, 16);
 
     mWindow = new GearsWindow();
-    AddWindow( std::unique_ptr<glfw::Window>( mWindow ) );
+    AddWindow( mWindow );
   }
 
   virtual void EventLoop() override {
@@ -343,7 +341,6 @@ public:
 
     // Swap buffers
     mWindow->SwapBuffers();
-    PollEvents();
 
     // Check if we are still running
     if (mWindow->WindowShouldClose()) {

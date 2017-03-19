@@ -8,7 +8,10 @@
 #include "glfw3.h"
 
 #include <memory>
+#include <string>
 #include <vector>
+
+#define GLFW_MOUSE_BUTTON_UNKNOWN   -1
 
 namespace glfw {
 
@@ -20,12 +23,14 @@ class EventManager;
 //!
 class Window {
 public:
-  Window(int width, int height, const char* title, GLFWmonitor* monitor = nullptr, GLFWwindow* share = nullptr);
+  Window(int width, int height, const std::string& title, GLFWmonitor* monitor = nullptr, GLFWwindow* share = nullptr);
   virtual ~Window();
 
   GLFWwindow*   GetGLFWwindow() const;
   int           GetWidth() const;
   int           GetHeight() const;
+  bool          IsValid() const;
+  void          Close();
 
   int           WindowShouldClose();
   void          SetWindowShouldClose(int value);
@@ -46,7 +51,7 @@ public:
   void          HideWindow();
   void          FocusWindow();
   GLFWmonitor*  GetWindowMonitor();
-  void          SetWindowMonitor(GLFWmonitor* monitor, int xpos, int ypos, int width, int height, int refreshRate);
+  void          SetWindowMonitor(GLFWmonitor* monitor, int xpos, int ypos, int width, int height, int refresh_rate);
   int           GetWindowAttrib(int attrib);
   void          SetWindowAttrib(int attrib, int value);
   void          SetWindowUserPointer(void* pointer);
@@ -61,6 +66,10 @@ public:
   virtual void  WindowMaximize(int iconified) {}
   virtual void  FramebufferSize(int width, int height) {}
 
+  void          PollEvents();
+  void          WaitEvents();
+  void          WaitEventsTimeout(double timeout);
+  void          PostEmptyEvent();
   int           GetInputMode(int mode);
   void          SetInputMode(int mode, int value);
   int           GetKey(int key);
@@ -104,17 +113,13 @@ class Application {
 public:
   Application(bool owns_terminate = true);
   Application(glfw::Window* window, bool owns_terminate = false);
-  Application(std::unique_ptr<glfw::Window> window, bool owns_terminate = true);
   virtual ~Application();
 
   void          AddWindow(glfw::Window* window);
-  void          AddWindow(std::unique_ptr<glfw::Window>& window);
   void          RemoveWindow(glfw::Window* window);
-  glfw::Window* GetCurrentWindow() const;
   
   bool          GetAutoPollEvents() const;
   void          SetAutoPollEvents(bool value);
-  void          PollEvents();
 
   virtual int   Execute();
   virtual void  Exit(int exit_code = 0);
@@ -127,9 +132,7 @@ private:
   bool m_owns_terminate = false;
   bool m_auto_poll_events = true;
 
-  std::vector<glfw::Window*>                  m_windows;
-  glfw::Window*                               m_current_window = nullptr;
-  std::vector<std::unique_ptr<glfw::Window>>  m_owned_windows;
+  std::vector<glfw::Window*>  m_windows;
 };
 
 } // namespace glfw
