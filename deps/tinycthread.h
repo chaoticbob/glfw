@@ -24,6 +24,12 @@ freely, subject to the following restrictions:
 #ifndef _TINYCTHREAD_H_
 #define _TINYCTHREAD_H_
 
+#if defined(__cplusplus)
+  #define _TTHREAD_CXX_EXTERN_ extern "C"
+#else
+  #define _TTHREAD_CXX_EXTERN_
+#endif
+
 /**
 * @file
 * @mainpage TinyCThread API Reference
@@ -121,7 +127,7 @@ typedef int _tthread_clockid_t;
 #define clockid_t _tthread_clockid_t
 
 /* Emulate clock_gettime */
-int _tthread_clock_gettime(clockid_t clk_id, struct timespec *ts);
+_TTHREAD_CXX_EXTERN_ int _tthread_clock_gettime(clockid_t clk_id, struct timespec *ts);
 #define clock_gettime _tthread_clock_gettime
 #ifndef CLOCK_REALTIME
   #define CLOCK_REALTIME 0
@@ -203,12 +209,12 @@ typedef pthread_mutex_t mtx_t;
 * @return @ref thrd_success on success, or @ref thrd_error if the request could
 * not be honored.
 */
-int mtx_init(mtx_t *mtx, int type);
+_TTHREAD_CXX_EXTERN_ int mtx_init(mtx_t *mtx, int type);
 
 /** Release any resources used by the given mutex.
 * @param mtx A mutex object.
 */
-void mtx_destroy(mtx_t *mtx);
+_TTHREAD_CXX_EXTERN_ void mtx_destroy(mtx_t *mtx);
 
 /** Lock the given mutex.
 * Blocks until the given mutex can be locked. If the mutex is non-recursive, and
@@ -218,11 +224,11 @@ void mtx_destroy(mtx_t *mtx);
 * @return @ref thrd_success on success, or @ref thrd_error if the request could
 * not be honored.
 */
-int mtx_lock(mtx_t *mtx);
+_TTHREAD_CXX_EXTERN_ int mtx_lock(mtx_t *mtx);
 
 /** NOT YET IMPLEMENTED.
 */
-int mtx_timedlock(mtx_t *mtx, const struct timespec *ts);
+_TTHREAD_CXX_EXTERN_ int mtx_timedlock(mtx_t *mtx, const struct timespec *ts);
 
 /** Try to lock the given mutex.
 * The specified mutex shall support either test and return or timeout. If the
@@ -232,14 +238,14 @@ int mtx_timedlock(mtx_t *mtx, const struct timespec *ts);
 * requested is already in use, or @ref thrd_error if the request could not be
 * honored.
 */
-int mtx_trylock(mtx_t *mtx);
+_TTHREAD_CXX_EXTERN_ int mtx_trylock(mtx_t *mtx);
 
 /** Unlock the given mutex.
 * @param mtx A mutex object.
 * @return @ref thrd_success on success, or @ref thrd_error if the request could
 * not be honored.
 */
-int mtx_unlock(mtx_t *mtx);
+_TTHREAD_CXX_EXTERN_ int mtx_unlock(mtx_t *mtx);
 
 /* Condition variable */
 #if defined(_TTHREAD_WIN32_)
@@ -257,12 +263,12 @@ typedef pthread_cond_t cnd_t;
 * @return @ref thrd_success on success, or @ref thrd_error if the request could
 * not be honored.
 */
-int cnd_init(cnd_t *cond);
+_TTHREAD_CXX_EXTERN_ int cnd_init(cnd_t *cond);
 
 /** Release any resources used by the given condition variable.
 * @param cond A condition variable object.
 */
-void cnd_destroy(cnd_t *cond);
+_TTHREAD_CXX_EXTERN_ void cnd_destroy(cnd_t *cond);
 
 /** Signal a condition variable.
 * Unblocks one of the threads that are blocked on the given condition variable
@@ -272,7 +278,7 @@ void cnd_destroy(cnd_t *cond);
 * @return @ref thrd_success on success, or @ref thrd_error if the request could
 * not be honored.
 */
-int cnd_signal(cnd_t *cond);
+_TTHREAD_CXX_EXTERN_ int cnd_signal(cnd_t *cond);
 
 /** Broadcast a condition variable.
 * Unblocks all of the threads that are blocked on the given condition variable
@@ -282,7 +288,7 @@ int cnd_signal(cnd_t *cond);
 * @return @ref thrd_success on success, or @ref thrd_error if the request could
 * not be honored.
 */
-int cnd_broadcast(cnd_t *cond);
+_TTHREAD_CXX_EXTERN_ int cnd_broadcast(cnd_t *cond);
 
 /** Wait for a condition variable to become signaled.
 * The function atomically unlocks the given mutex and endeavors to block until
@@ -294,7 +300,7 @@ int cnd_broadcast(cnd_t *cond);
 * @return @ref thrd_success on success, or @ref thrd_error if the request could
 * not be honored.
 */
-int cnd_wait(cnd_t *cond, mtx_t *mtx);
+_TTHREAD_CXX_EXTERN_ int cnd_wait(cnd_t *cond, mtx_t *mtx);
 
 /** Wait for a condition variable to become signaled.
 * The function atomically unlocks the given mutex and endeavors to block until
@@ -308,7 +314,7 @@ int cnd_wait(cnd_t *cond, mtx_t *mtx);
 * specified in the call was reached without acquiring the requested resource, or
 * @ref thrd_error if the request could not be honored.
 */
-int cnd_timedwait(cnd_t *cond, mtx_t *mtx, const struct timespec *ts);
+_TTHREAD_CXX_EXTERN_ int cnd_timedwait(cnd_t *cond, mtx_t *mtx, const struct timespec *ts);
 
 /* Thread */
 #if defined(_TTHREAD_WIN32_)
@@ -339,28 +345,28 @@ typedef int (*thrd_start_t)(void *arg);
 * original thread has exited and either been detached or joined to another
 * thread.
 */
-int thrd_create(thrd_t *thr, thrd_start_t func, void *arg);
+_TTHREAD_CXX_EXTERN_ int thrd_create(thrd_t *thr, thrd_start_t func, void *arg);
 
 /** Identify the calling thread.
 * @return The identifier of the calling thread.
 */
-thrd_t thrd_current(void);
+_TTHREAD_CXX_EXTERN_ thrd_t thrd_current(void);
 
 /** NOT YET IMPLEMENTED.
 */
-int thrd_detach(thrd_t thr);
+_TTHREAD_CXX_EXTERN_ int thrd_detach(thrd_t thr);
 
 /** Compare two thread identifiers.
 * The function determines if two thread identifiers refer to the same thread.
 * @return Zero if the two thread identifiers refer to different threads.
 * Otherwise a nonzero value is returned.
 */
-int thrd_equal(thrd_t thr0, thrd_t thr1);
+_TTHREAD_CXX_EXTERN_ int thrd_equal(thrd_t thr0, thrd_t thr1);
 
 /** Terminate execution of the calling thread.
 * @param res Result code of the calling thread.
 */
-void thrd_exit(int res);
+_TTHREAD_CXX_EXTERN_ void thrd_exit(int res);
 
 /** Wait for a thread to terminate.
 * The function joins the given thread with the current thread by blocking
@@ -371,7 +377,7 @@ void thrd_exit(int res);
 * @return @ref thrd_success on success, or @ref thrd_error if the request could
 * not be honored.
 */
-int thrd_join(thrd_t thr, int *res);
+_TTHREAD_CXX_EXTERN_ int thrd_join(thrd_t thr, int *res);
 
 /** Put the calling thread to sleep.
 * Suspend execution of the calling thread.
@@ -383,13 +389,13 @@ int thrd_join(thrd_t thr, int *res);
 *                  time.
 * @return 0 (zero) on successful sleep, or -1 if an interrupt occurred.
 */
-int thrd_sleep(const struct timespec *time_point, struct timespec *remaining);
+_TTHREAD_CXX_EXTERN_ int thrd_sleep(const struct timespec *time_point, struct timespec *remaining);
 
 /** Yield execution to another thread.
 * Permit other threads to run, even if the current thread would ordinarily
 * continue to run.
 */
-void thrd_yield(void);
+_TTHREAD_CXX_EXTERN_ void thrd_yield(void);
 
 /* Thread local storage */
 #if defined(_TTHREAD_WIN32_)
@@ -413,21 +419,21 @@ typedef void (*tss_dtor_t)(void *val);
 * not NULL when calling this function under Windows, the function will fail
 * and return @ref thrd_error.
 */
-int tss_create(tss_t *key, tss_dtor_t dtor);
+_TTHREAD_CXX_EXTERN_ int tss_create(tss_t *key, tss_dtor_t dtor);
 
 /** Delete a thread-specific storage.
 * The function releases any resources used by the given thread-specific
 * storage.
 * @param key The key that shall be deleted.
 */
-void tss_delete(tss_t key);
+_TTHREAD_CXX_EXTERN_ void tss_delete(tss_t key);
 
 /** Get the value for a thread-specific storage.
 * @param key The thread-specific storage identifier.
 * @return The value for the current thread held in the given thread-specific
 * storage.
 */
-void *tss_get(tss_t key);
+_TTHREAD_CXX_EXTERN_ void *tss_get(tss_t key);
 
 /** Set the value for a thread-specific storage.
 * @param key The thread-specific storage identifier.
@@ -436,7 +442,7 @@ void *tss_get(tss_t key);
 * @return @ref thrd_success on success, or @ref thrd_error if the request could
 * not be honored.
 */
-int tss_set(tss_t key, void *val);
+_TTHREAD_CXX_EXTERN_ int tss_set(tss_t key, void *val);
 
 
 #endif /* _TINYTHREAD_H_ */

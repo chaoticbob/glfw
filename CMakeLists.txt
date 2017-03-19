@@ -1,6 +1,6 @@
 set(CMAKE_LEGACY_CYGWIN_WIN32 OFF)
 
-project(GLFW C)
+project(GLFW C CXX)
 
 cmake_minimum_required(VERSION 2.8.12)
 
@@ -59,6 +59,8 @@ if (BUILD_SHARED_LIBS AND UNIX)
 else()
     set(GLFW_LIB_NAME glfw3)
 endif()
+
+set(GLFWPP_LIB_NAME glfwpp)
 
 if (GLFW_VULKAN_STATIC)
     set(_GLFW_VULKAN_STATIC 1)

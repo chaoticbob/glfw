@@ -5,6 +5,9 @@ set(common_HEADERS internal.h
                    "${GLFW_SOURCE_DIR}/include/GLFW/glfw3native.h")
 set(common_SOURCES context.c init.c input.c monitor.c vulkan.c window.c)
 
+set(common_HEADERS_CXX "${GLFW_SOURCE_DIR}/include/GLFW/glfwpp.hpp")
+set(common_SOURCES_CXX glfwpp.cpp)
+
 if (_GLFW_COCOA)
     set(glfw_HEADERS ${common_HEADERS} cocoa_platform.h cocoa_joystick.h
                      posix_tls.h nsgl_context.h egl_context.h osmesa_context.c)
@@ -83,6 +86,26 @@ target_include_directories(glfw PRIVATE
                            "${GLFW_BINARY_DIR}/src"
                            ${glfw_INCLUDE_DIRS})
 
+set(glfwpp_HEADERS ${common_HEADERS_CXX})
+set(glfwpp_SOURCES ${common_SOURCES_CXX})
+
+add_library(glfwpp ${common_HEADERS_CXX} ${common_SOURCES_CXX})
+set_target_properties(glfwpp PROPERTIES
+                      OUTPUT_NAME ${GLFWPP_LIB_NAME}
+                      VERSION ${GLFW_VERSION}
+                      SOVERSION ${GLFW_VERSION_MAJOR}
+                      POSITION_INDEPENDENT_CODE ON
+                      FOLDER "GLFW3")
+
+target_compile_definitions(glfwpp PRIVATE -D_GLFW_USE_CONFIG_H)
+target_include_directories(glfwpp PUBLIC
+                           $<BUILD_INTERFACE:${GLFW_SOURCE_DIR}/include>
+                           $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>)
+target_include_directories(glfwpp PRIVATE
+                           "${GLFW_SOURCE_DIR}/src"
+                           "${GLFW_BINARY_DIR}/src"
+                           ${glfwpp_INCLUDE_DIRS})
+
 # HACK: When building on MinGW, WINVER and UNICODE need to be defined before
 # the inclusion of stddef.h (by glfw3.h), which is itself included before
 # win32_platform.h.  We define them here until a saner solution can be found
@@ -95,40 +118,60 @@ target_compile_options(glfw PRIVATE
                        "$<$<C_COMPILER_ID:Clang>:-Wall>"
                        "$<$<C_COMPILER_ID:GNU>:-Wall>")
 
+target_compile_definitions(glfwpp PRIVATE
+                           "$<$<BOOL:${MINGW}>:UNICODE;WINVER=0x0501>")
+
+# Enable a reasonable set of warnings (no, -Wextra is not reasonable)
+target_compile_options(glfwpp PRIVATE
+                       "$<$<C_COMPILER_ID:Clang>:-Wall>"
+                       "$<$<C_COMPILER_ID:GNU>:-Wall>")
+
 if (BUILD_SHARED_LIBS)
     if (WIN32)
         if (MINGW)
             # Remove the lib prefix on the DLL (but not the import library
             set_target_properties(glfw PROPERTIES PREFIX "")
+            set_target_properties(glfwpp PROPERTIES PREFIX "")
 
             # Add a suffix to the import library to avoid naming conflicts
             set_target_properties(glfw PROPERTIES IMPORT_SUFFIX "dll.a")
+            set_target_properties(glfwpp PROPERTIES IMPORT_SUFFIX "dll.a")
         else()
             # Add a suffix to the import library to avoid naming conflicts
             set_target_properties(glfw PROPERTIES IMPORT_SUFFIX "dll.lib")
+            set_target_properties(glfwpp PROPERTIES IMPORT_SUFFIX "dll.lib")
         endif()
     elseif (APPLE)
         # Add -fno-common to work around a bug in Apple's GCC
         target_compile_options(glfw PRIVATE "-fno-common")
+        target_compile_options(glfwpp PRIVATE "-fno-common")
 
         set_target_properties(glfw PROPERTIES
+                              INSTALL_NAME_DIR "lib${LIB_SUFFIX}")
+        set_target_properties(glfwpp PROPERTIES
                               INSTALL_NAME_DIR "lib${LIB_SUFFIX}")
     elseif (UNIX)
         # Hide symbols not explicitly tagged for export from the shared library
         target_compile_options(glfw PRIVATE "-fvisibility=hidden")
+        target_compile_options(glfwpp PRIVATE "-fvisibility=hidden")
     endif()
 
     target_compile_definitions(glfw INTERFACE -DGLFW_DLL)
     target_link_libraries(glfw PRIVATE ${glfw_LIBRARIES})
+    target_compile_definitions(glfwpp INTERFACE -DGLFW_DLL)
+    target_link_libraries(glfwpp PRIVATE ${glfw_LIBRARIES})
 else()
     target_link_libraries(glfw INTERFACE ${glfw_LIBRARIES})
+    target_link_libraries(glfwpp INTERFACE ${glfw_LIBRARIES})
 endif()
 
 if (MSVC)
     target_compile_definitions(glfw PRIVATE _CRT_SECURE_NO_WARNINGS)
+    target_compile_definitions(glfwpp PRIVATE _CRT_SECURE_NO_WARNINGS)
 endif()
 
 if (GLFW_INSTALL)
     install(TARGETS glfw EXPORT glfwTargets DESTINATION lib${LIB_SUFFIX})
+    install(TARGETS glfwpp EXPORT glfwTargets DESTINATION lib${LIB_SUFFIX})
 endif()
 

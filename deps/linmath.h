@@ -3,7 +3,7 @@
 
 #include <math.h>
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && ! defined(__cplusplus)
 #define inline __inline
 #endif
 
