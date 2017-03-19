@@ -78,13 +78,14 @@ link_libraries(glfwpp)
 add_executable(boing-cpp WIN32 MACOSX_BUNDLE boing.cpp ${ICON} ${GLAD})
 add_executable(gears-cpp WIN32 MACOSX_BUNDLE gears.cpp ${ICON} ${GLAD})
 add_executable(particles-cpp WIN32 MACOSX_BUNDLE particles.cpp ${ICON} ${TINYCTHREAD} ${GETOPT} ${GLAD})
+add_executable(simple-cpp WIN32 MACOSX_BUNDLE simple.cpp ${ICON} ${GLAD})
 
 #target_link_libraries(particles "${CMAKE_THREAD_LIBS_INIT}")
 #if (RT_LIBRARY)
 #    target_link_libraries(particles "${RT_LIBRARY}")
 #endif()
 
-set(WINDOWS_BINARIES boing-cpp gears-cpp particles-cpp)
+set(WINDOWS_BINARIES boing-cpp gears-cpp particles-cpp simple-cpp)
 #set(CONSOLE_BINARIES offscreen)
 
 set_target_properties(${WINDOWS_BINARIES} ${CONSOLE_BINARIES} PROPERTIES
@@ -101,7 +102,7 @@ if (APPLE)
     set_target_properties(gears PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "GearsCPP")
     #set_target_properties(heightmap PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "Heightmap")
     set_target_properties(particles PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "ParticlesCPP")
-    #set_target_properties(simple PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "Simple")
+    set_target_properties(simple PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "SimpleCPP")
     #set_target_properties(splitview PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "SplitView")
     #set_target_properties(wave PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "Wave")
 

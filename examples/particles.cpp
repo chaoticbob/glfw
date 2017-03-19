@@ -1092,7 +1092,6 @@ private:
 int main(int argc, char** argv)
 {
   auto app = std::make_unique<ParticlesApp>(argc, argv);
-  app->Execute();
-
-  exit( EXIT_SUCCESS );
+  int res = app->Execute();
+  return res;
 }

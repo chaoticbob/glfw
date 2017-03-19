@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cstdlib>
 #include <mutex>
 #include <thread>
 #include <vector>
@@ -545,7 +546,7 @@ void Application::PollEvents()
   glfwPollEvents();
 }
 
-void Application::Execute()
+int Application::Execute()
 {
   m_running = true;
   while (m_running) {
@@ -559,11 +560,14 @@ void Application::Execute()
       m_running = false;
     }
   }
+
+  return m_exit_code;
 }
 
-void Application::Exit()
+void Application::Exit(int exit_code)
 {
   m_running = false;
+  m_exit_code = exit_code;
 }
 
 } // namespace glfw

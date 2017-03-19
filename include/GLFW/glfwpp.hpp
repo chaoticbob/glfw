@@ -116,12 +116,13 @@ public:
   void          SetAutoPollEvents(bool value);
   void          PollEvents();
 
-  virtual void  Execute();
-  virtual void  Exit();
+  virtual int   Execute();
+  virtual void  Exit(int exit_code = 0);
   virtual void  EventLoop() {}
 
 private:
   bool m_running = false;
+  int  m_exit_code = 0;
   bool m_exit_on_last_window_closed = true;
   bool m_owns_terminate = false;
   bool m_auto_poll_events = true;

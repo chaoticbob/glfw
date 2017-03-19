@@ -692,7 +692,6 @@ private:
 int main( void )
 {
   auto app = std::make_unique<BoingApp>();
-  app->Execute();
-
-  exit( EXIT_SUCCESS );
+  int res = app->Execute();
+  return res;
 }
