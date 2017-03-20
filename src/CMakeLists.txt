@@ -80,11 +80,14 @@ set_target_properties(glfw PROPERTIES
 target_compile_definitions(glfw PRIVATE -D_GLFW_USE_CONFIG_H)
 target_include_directories(glfw PUBLIC
                            $<BUILD_INTERFACE:${GLFW_SOURCE_DIR}/include>
-                           $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>)
+                           $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>
+                           ${VULKAN_INCLUDE_DIR})
 target_include_directories(glfw PRIVATE
                            "${GLFW_SOURCE_DIR}/src"
                            "${GLFW_BINARY_DIR}/src"
                            ${glfw_INCLUDE_DIRS})
+target_link_libraries(glfw INTERFACE
+                      ${VULKAN_LIBRARY})
 
 set(glfwpp_HEADERS ${common_HEADERS_CXX})
 set(glfwpp_SOURCES ${common_SOURCES_CXX})
