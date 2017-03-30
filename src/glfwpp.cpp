@@ -266,6 +266,14 @@ GLFWwindow* Window::GetGLFWwindow() const
   return m_glfw_window;
 }
 
+#if defined(GLFW_EXPOSE_NATIVE_WIN32)
+HWND Window::GetNativeWindowHandle() const
+{
+  HWND result = glfwGetWin32Window(m_glfw_window);
+  return result;
+}
+#endif
+
 int Window::GetWidth() const
 {
   return m_width;
@@ -687,6 +695,14 @@ Application::~Application()
     glfwTerminate();
   }
 }
+
+#if defined(GLFW_EXPOSE_NATIVE_WIN32)
+HINSTANCE Application::GetNativeHandle()
+{
+  HINSTANCE result = ::GetModuleHandle(nullptr);
+  return result;
+}
+#endif
 
 void Application::AddWindow(glfw::Window* window)
 {

@@ -7,6 +7,11 @@
 
 #include "glfw3.h"
 
+#if defined(_WIN32)
+  #define GLFW_EXPOSE_NATIVE_WIN32
+  #include "glfw3native.h"
+#endif
+
 #include <memory>
 #include <string>
 #include <vector>
@@ -27,6 +32,10 @@ public:
   virtual ~Window();
 
   GLFWwindow*   GetGLFWwindow() const;
+#if defined(GLFW_EXPOSE_NATIVE_WIN32)
+  HWND          GetNativeWindowHandle() const;
+#endif
+
   int           GetWidth() const;
   int           GetHeight() const;
   bool          IsValid() const;
@@ -114,6 +123,10 @@ public:
   Application(bool owns_terminate = true);
   Application(glfw::Window* window, bool owns_terminate = false);
   virtual ~Application();
+
+#if defined(GLFW_EXPOSE_NATIVE_WIN32)
+  static HINSTANCE  GetNativeHandle();
+#endif
 
   void          AddWindow(glfw::Window* window);
   void          RemoveWindow(glfw::Window* window);
