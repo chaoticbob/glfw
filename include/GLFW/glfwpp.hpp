@@ -14,6 +14,7 @@
 
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #define GLFW_MOUSE_BUTTON_UNKNOWN   -1
@@ -22,6 +23,17 @@ namespace glfw {
 
 class Application;
 class EventManager;
+class Window;
+
+class WindowHints {
+public:
+  WindowHints(const std::unordered_map<int, int>& hints = std::unordered_map<int, int>());
+  virtual ~WindowHints();
+  void          Hint(int hint, int value);
+private:
+  std::unordered_map<int, int>  m_hints;
+  friend class Window;
+};
 
 //! \class Window
 //!
@@ -29,6 +41,7 @@ class EventManager;
 class Window {
 public:
   Window(int width, int height, const std::string& title, GLFWmonitor* monitor = nullptr, GLFWwindow* share = nullptr);
+  Window(const WindowHints& hints, int width, int height, const std::string& title, GLFWmonitor* monitor = nullptr, GLFWwindow* share = nullptr);
   virtual ~Window();
 
   GLFWwindow*   GetGLFWwindow() const;

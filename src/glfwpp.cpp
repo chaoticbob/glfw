@@ -231,11 +231,45 @@ void EventManager::DropCallback(GLFWwindow* glfw_window, int count, const char**
 // =============================================================================
 // Window
 // =============================================================================
+WindowHints::WindowHints(const std::unordered_map<int, int>& hints)
+  : m_hints(hints)
+{
+}
+
+WindowHints::~WindowHints()
+{
+}
+
+void WindowHints::Hint(int hint, int value)
+{
+  m_hints[hint] = value;
+}
+
+// =============================================================================
+// Window
+// =============================================================================
 Window::Window(int width, int height, const std::string& title, GLFWmonitor* monitor, GLFWwindow* share)
   : m_width(width), m_height(height)
 {
   if (! glfwInit()) {
     exit(EXIT_FAILURE);
+  }
+
+  m_glfw_window = glfwCreateWindow(width, height, title.c_str(), monitor, share);
+  s_event_manager.RegisterWindow(m_glfw_window, this);
+
+  glfwMakeContextCurrent(m_glfw_window);
+}
+
+Window::Window(const WindowHints& hints, int width, int height, const std::string& title, GLFWmonitor* monitor, GLFWwindow* share)
+  : m_width(width), m_height(height)
+{
+  if (! glfwInit()) {
+    exit(EXIT_FAILURE);
+  }
+
+  for (const auto& it : hints.m_hints) {
+    glfwWindowHint(it.first, it.second);
   }
 
   m_glfw_window = glfwCreateWindow(width, height, title.c_str(), monitor, share);
