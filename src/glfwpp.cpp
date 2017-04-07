@@ -273,6 +273,8 @@ Window::Window(const WindowHints& hints, int width, int height, const std::strin
   }
 
   m_glfw_window = glfwCreateWindow(width, height, title.c_str(), monitor, share);
+  assert(m_glfw_window != nullptr);
+
   s_event_manager.RegisterWindow(m_glfw_window, this);
 
   glfwMakeContextCurrent(m_glfw_window);
