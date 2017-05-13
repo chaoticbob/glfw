@@ -271,10 +271,16 @@ the application has no preference.
 
 @anchor GLFW_SRGB_CAPABLE
 __GLFW_SRGB_CAPABLE__ specifies whether the framebuffer should be sRGB capable.
-If supported, a created OpenGL context will support the `GL_FRAMEBUFFER_SRGB`
-enable, also called `GL_FRAMEBUFFER_SRGB_EXT`) for controlling sRGB rendering
-and a created OpenGL ES context will always have sRGB rendering enabled.
 Possible values are `GLFW_TRUE` and `GLFW_FALSE`.
+
+@par
+__OpenGL:__ If enabled and supported by the system, the `GL_FRAMEBUFFER_SRGB`
+enable will control sRGB rendering.  By default, sRGB rendering will be
+disabled.
+
+@par
+__OpenGL ES:__ If enabled and supported by the system, the context will always
+have sRGB rendering enabled.
 
 @anchor GLFW_DOUBLEBUFFER
 __GLFW_DOUBLEBUFFER__ specifies whether the framebuffer should be double
@@ -331,6 +337,9 @@ the other on Linux for now.
 __GLFW_CONTEXT_VERSION_MAJOR__ and __GLFW_CONTEXT_VERSION_MINOR__ specify the
 client API version that the created context must be compatible with.  The exact
 behavior of these hints depend on the requested client API.
+
+@note Do not confuse these hints with `GLFW_VERSION_MAJOR` and
+`GLFW_VERSION_MINOR`, which provide the API version of the GLFW header.
 
 @par
 __OpenGL:__ These hints are not hard constraints, but creation will fail if the
@@ -975,6 +984,10 @@ glfwFocusWindow.
 glfwFocusWindow(window);
 @endcode
 
+Keep in mind that it can be very disruptive to the user when a window is forced
+to the top.  For a less disruptive way of getting the user's attention, see
+[attention requests](@ref window_attention).
+
 If you wish to be notified when a window gains or loses input focus, whether by
 the user, system or your own code, set a focus callback.
 
@@ -1011,6 +1024,20 @@ before creating the window.
 @code
 glfwWindowHint(GLFW_FOCUSED, GLFW_FALSE);
 @endcode
+
+
+@subsection window_attention Window attention request
+
+If you wish to notify the user of an event without interrupting, you can request
+attention with @ref glfwRequestWindowAttention.
+
+@code
+glfwRequestWindowAttention(window);
+@endcode
+
+The system will highlight the specified window, or on platforms where this is
+not supported, the application as a whole.  Once the user has given it
+attention, the system will automatically end the request.
 
 
 @subsection window_refresh Window damage and refresh
@@ -1125,6 +1152,10 @@ or `GLFW_OSMESA_CONTEXT_API`.
 __GLFW_CONTEXT_VERSION_MAJOR__, __GLFW_CONTEXT_VERSION_MINOR__ and
 __GLFW_CONTEXT_REVISION__ indicate the client API version of the window's
 context.
+
+@note Do not confuse these attributes with `GLFW_VERSION_MAJOR`,
+`GLFW_VERSION_MINOR` and `GLFW_VERSION_REVISION` which provide the API version
+of the GLFW header.
 
 @anchor GLFW_OPENGL_FORWARD_COMPAT_attrib
 __GLFW_OPENGL_FORWARD_COMPAT__ is `GLFW_TRUE` if the window's context is an

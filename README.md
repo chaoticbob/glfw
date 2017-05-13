@@ -122,6 +122,9 @@ information on what to include when reporting a bug.
 
 ## Changelog
 
+- Added `glfwGetError` function for querying the last error code (#970)
+- Added `glfwRequestWindowAttention` function for requesting attention from the
+  user (#732,#988)
 - Added `glfwGetKeyScancode` function that allows retrieving platform dependent
   scancodes for keys (#830)
 - Added `glfwSetWindowMaximizeCallback` and `GLFWwindowmaximizefun` for
@@ -167,11 +170,15 @@ information on what to include when reporting a bug.
 - [Win32] Bugfix: Vulkan libraries have a new path as of SDK 1.0.42.0 (#956)
 - [Win32] Bugfix: Monitors with no display devices were not enumerated (#960)
 - [Win32] Bugfix: Monitor events were not emitted (#784)
+- [X11] Moved to XI2 `XI_RawMotion` for disable cursor mode motion input (#125)
 - [X11] Replaced `_GLFW_HAS_XF86VM` compile-time option with dynamic loading
 - [X11] Bugfix: `glfwGetVideoMode` would segfault on Cygwin/X
 - [X11] Bugfix: Dynamic X11 library loading did not use full sonames (#941)
 - [X11] Bugfix: Window creation on 64-bit would read past top of stack (#951)
 - [X11] Bugfix: XDND support had multiple non-conformance issues (#968)
+- [X11] Bugfix: The RandR monitor path was disabled despite working RandR (#972)
+- [X11] Bugfix: IM-duplicated key events would leak at low polling rates (#747)
+- [X11] Bugfix: Gamma ramp setting via RandR did not validate ramp size
 - [Linux] Bugfix: Event processing did not detect joystick disconnection (#932)
 - [Cocoa] Added support for Vulkan window surface creation via
           [MoltenVK](https://moltengl.com/moltenvk/) (#870)
@@ -187,7 +194,10 @@ information on what to include when reporting a bug.
 - [Cocoa] Bugfix: Leaving video mode with `glfwSetWindowMonitor` would set
                   incorrect position and size (#748)
 - [Cocoa] Bugfix: Iconified full screen windows could not be restored (#848)
-- [X11] Moved to XI2 `XI_RawMotion` for disable cursor mode motion input (#125)
+- [Cocoa] Bugfix: Value range was ignored for joystick hats and buttons (#888)
+- [Cocoa] Bugfix: Full screen framebuffer was incorrectly sized for some video
+                  modes (#682)
+- [WGL] Added support for `WGL_EXT_colorspace` for OpenGL ES contexts
 - [EGL] Added support for `EGL_KHR_get_all_proc_addresses` (#871)
 - [EGL] Added support for `EGL_KHR_context_flush_control`
 - [EGL] Bugfix: The test for `EGL_RGB_BUFFER` was invalid
@@ -241,6 +251,7 @@ skills.
  - Jonathan Dummer
  - Ralph Eastwood
  - Siavash Eliasi
+ - Felipe Ferreira
  - Michael Fogleman
  - Gerald Franz
  - Mário Freitas

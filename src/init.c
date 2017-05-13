@@ -43,6 +43,7 @@ _GLFWlibrary _glfw = { GLFW_FALSE };
 // These are outside of _glfw so they can be used before initialization and
 // after termination
 //
+static int _glfwErrorCode;
 static GLFWerrorfun _glfwErrorCallback;
 static _GLFWinitconfig _glfwInitHints =
 {
@@ -113,6 +114,12 @@ static void terminate(void)
     _glfwTerminateVulkan();
     _glfwPlatformTerminate();
 
+    if (_glfwPlatformIsValidTls(&_glfw.error))
+        _glfwErrorCode = (int) (intptr_t) _glfwPlatformGetTls(&_glfw.error);
+
+    _glfwPlatformDestroyTls(&_glfw.context);
+    _glfwPlatformDestroyTls(&_glfw.error);
+
     memset(&_glfw, 0, sizeof(_glfw));
 }
 
@@ -123,6 +130,11 @@ static void terminate(void)
 
 void _glfwInputError(int error, const char* format, ...)
 {
+    if (_glfw.initialized)
+        _glfwPlatformSetTls(&_glfw.error, (void*) (intptr_t) error);
+    else
+        _glfwErrorCode = error;
+
     if (_glfwErrorCallback)
     {
         char buffer[8192];
@@ -168,8 +180,15 @@ GLFWAPI int glfwInit(void)
         return GLFW_FALSE;
     }
 
+    if (!_glfwPlatformCreateTls(&_glfw.error))
+        return GLFW_FALSE;
+    if (!_glfwPlatformCreateTls(&_glfw.context))
+        return GLFW_FALSE;
+
+    _glfwPlatformSetTls(&_glfw.error, (void*) (intptr_t) _glfwErrorCode);
+
     _glfw.initialized = GLFW_TRUE;
-    _glfw.timerOffset = _glfwPlatformGetTimerValue();
+    _glfw.timer.offset = _glfwPlatformGetTimerValue();
 
     // Not all window hints have zero as their default value
     glfwDefaultWindowHints();
@@ -216,6 +235,24 @@ GLFWAPI void glfwGetVersion(int* major, int* minor, int* rev)
 GLFWAPI const char* glfwGetVersionString(void)
 {
     return _glfwPlatformGetVersionString();
+}
+
+GLFWAPI int glfwGetError(void)
+{
+    int error;
+
+    if (_glfw.initialized)
+    {
+        error = (int) (intptr_t) _glfwPlatformGetTls(&_glfw.error);
+        _glfwPlatformSetTls(&_glfw.error, (intptr_t) GLFW_NO_ERROR);
+    }
+    else
+    {
+        error = _glfwErrorCode;
+        _glfwErrorCode = GLFW_NO_ERROR;
+    }
+
+    return error;
 }
 
 GLFWAPI GLFWerrorfun glfwSetErrorCallback(GLFWerrorfun cbfun)

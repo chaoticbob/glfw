@@ -1,8 +1,8 @@
-set(CMAKE_LEGACY_CYGWIN_WIN32 OFF)
+cmake_minimum_required(VERSION 2.8.12)
 
 project(GLFW C CXX)
 
-cmake_minimum_required(VERSION 2.8.12)
+set(CMAKE_LEGACY_CYGWIN_WIN32 OFF)
 
 if (NOT CMAKE_VERSION VERSION_LESS "3.0")
     # Until all major package systems have moved to CMake 3,
@@ -310,7 +310,7 @@ if (_GLFW_MIR)
     find_package(Mir REQUIRED)
     list(APPEND glfw_PKG_DEPS "mirclient")
 
-    list(APPEND glfw_INCLUDE_DIRS "${MIR_INCLUDE_DIR}")
+    list(APPEND glfw_INCLUDE_DIRS "${MIR_INCLUDE_DIRS}")
     list(APPEND glfw_LIBRARIES "${MIR_LIBRARIES}" "${CMAKE_THREAD_LIBS_INIT}")
 
     find_package(XKBCommon REQUIRED)

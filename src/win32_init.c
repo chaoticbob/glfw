@@ -30,8 +30,9 @@
 #include <stdlib.h>
 #include <malloc.h>
 
-#include <initguid.h>
-DEFINE_GUID(GUID_DEVINTERFACE_HID,0x4d1e55b2,0xf16f,0x11cf,0x88,0xcb,0x00,0x11,0x11,0x00,0x00,0x30);
+static const GUID _glfw_GUID_DEVINTERFACE_HID = {0x4d1e55b2,0xf16f,0x11cf,{0x88,0xcb,0x00,0x11,0x11,0x00,0x00,0x30}};
+
+#define GUID_DEVINTERFACE_HID _glfw_GUID_DEVINTERFACE_HID
 
 #if defined(_GLFW_USE_HYBRID_HPG) || defined(_GLFW_USE_OPTIMUS_HPG)
 
@@ -435,9 +436,6 @@ void _glfwInputErrorWin32(int error, const char* description)
 
 int _glfwPlatformInit(void)
 {
-    if (!_glfwInitThreadLocalStorageWin32())
-        return GLFW_FALSE;
-
     // To make SetForegroundWindow work as we want, we need to fiddle
     // with the FOREGROUNDLOCKTIMEOUT system setting (we do this as early
     // as possible in the hope of still being the foreground process)
@@ -489,7 +487,6 @@ void _glfwPlatformTerminate(void)
     _glfwTerminateEGL();
 
     _glfwTerminateJoysticksWin32();
-    _glfwTerminateThreadLocalStorageWin32();
 
     freeLibraries();
 }
