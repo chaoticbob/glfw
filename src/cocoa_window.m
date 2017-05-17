@@ -423,7 +423,10 @@ static const NSRange kEmptyRange = { NSNotFound, 0 };
 
 - (id)makeBackingLayer
 {
-    return window->ns.layer;
+    if (window->ns.layer)
+        return window->ns.layer;
+
+    return [super makeBackingLayer];
 }
 
 - (void)cursorUpdate:(NSEvent *)event
