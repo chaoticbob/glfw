@@ -122,7 +122,8 @@ information on what to include when reporting a bug.
 
 ## Changelog
 
-- Added `glfwGetError` function for querying the last error code (#970)
+- Added `glfwGetError` function for querying the last error code and its
+  description (#970)
 - Added `glfwRequestWindowAttention` function for requesting attention from the
   user (#732,#988)
 - Added `glfwGetKeyScancode` function that allows retrieving platform dependent
@@ -181,6 +182,7 @@ information on what to include when reporting a bug.
 - [X11] Bugfix: Gamma ramp setting via RandR did not validate ramp size
 - [X11] Bugfix: Key name string encoding depended on current locale (#981,#983)
 - [Linux] Bugfix: Event processing did not detect joystick disconnection (#932)
+- [Linux] Bugfix: The joystick device path could be truncated (#1025)
 - [Cocoa] Added support for Vulkan window surface creation via
           [MoltenVK](https://moltengl.com/moltenvk/) (#870)
 - [Cocoa] Added support for loading a `MainMenu.nib` when available
@@ -199,6 +201,8 @@ information on what to include when reporting a bug.
 - [Cocoa] Bugfix: Full screen framebuffer was incorrectly sized for some video
                   modes (#682)
 - [WGL] Added support for `WGL_EXT_colorspace` for OpenGL ES contexts
+- [WGL] Added support for `WGL_ARB_create_context_no_error`
+- [GLX] Added support for `GLX_ARB_create_context_no_error`
 - [EGL] Added support for `EGL_KHR_get_all_proc_addresses` (#871)
 - [EGL] Added support for `EGL_KHR_context_flush_control`
 - [EGL] Bugfix: The test for `EGL_RGB_BUFFER` was invalid
@@ -351,6 +355,7 @@ skills.
  - Jay Weisskopf
  - Frank Wille
  - yuriks
+ - Ryogo Yoshimura
  - Santi Zupancic
  - Jonas Ådahl
  - Lasse Öörni

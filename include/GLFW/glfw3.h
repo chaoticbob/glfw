@@ -1459,6 +1459,9 @@ typedef struct GLFWgammaramp
 
 /*! @brief Image data.
  *
+ *  This describes a single 2D image.  See the documentation for each related
+ *  function what the expected pixel format is.
+ *
  *  @sa @ref cursor_custom
  *  @sa @ref window_icon
  *
@@ -1643,12 +1646,19 @@ GLFWAPI const char* glfwGetVersionString(void);
 /*! @brief Returns and clears the last error for the calling thread.
  *
  *  This function returns and clears the [error code](@ref error) of the last
- *  error that occurred on the calling thread.  If no error has occurred since
- *  the last call, it returns @ref GLFW_NO_ERROR.
+ *  error that occurred on the calling thread, and optionally a UTF-8 encoded
+ *  human-readable description of it.  If no error has occurred since the last
+ *  call, it returns @ref GLFW_NO_ERROR and the description pointer is set to
+ *  `NULL`.
  *
+ *  @param[in] description Where to store the error description pointer, or `NULL`.
  *  @return The last error code for the calling thread, or @ref GLFW_NO_ERROR.
  *
  *  @errors None.
+ *
+ *  @pointer_lifetime The returned string is allocated and freed by GLFW.  You
+ *  should not free it yourself.  It is guaranteed to be valid only until the
+ *  next error occurs or the library is terminated.
  *
  *  @remark This function may be called before @ref glfwInit.
  *
@@ -1661,7 +1671,7 @@ GLFWAPI const char* glfwGetVersionString(void);
  *
  *  @ingroup init
  */
-GLFWAPI int glfwGetError(void);
+GLFWAPI int glfwGetError(const char** description);
 
 /*! @brief Sets the error callback.
  *
@@ -2322,6 +2332,10 @@ GLFWAPI void glfwSetWindowTitle(GLFWwindow* window, const char* title);
  *  candidate images, those of or closest to the sizes desired by the system are
  *  selected.  If no images are specified, the window reverts to its default
  *  icon.
+ *
+ *  The pixels are 32-bit, little-endian, non-premultiplied RGBA, i.e. eight
+ *  bits per channel with the red channel first.  They are arranged canonically
+ *  as packed sequential rows, starting from the top-left corner.
  *
  *  The desired image sizes varies depending on platform and system settings.
  *  The selected images will be rescaled as needed.  Good sizes include 16x16,
@@ -3726,8 +3740,8 @@ GLFWAPI void glfwSetCursorPos(GLFWwindow* window, double xpos, double ypos);
  *  Any remaining cursors are destroyed by @ref glfwTerminate.
  *
  *  The pixels are 32-bit, little-endian, non-premultiplied RGBA, i.e. eight
- *  bits per channel.  They are arranged canonically as packed sequential rows,
- *  starting from the top-left corner.
+ *  bits per channel with the red channel first.  They are arranged canonically
+ *  as packed sequential rows, starting from the top-left corner.
  *
  *  The cursor hotspot is specified in pixels, relative to the upper-left corner
  *  of the cursor image.  Like all other coordinate systems in GLFW, the X-axis

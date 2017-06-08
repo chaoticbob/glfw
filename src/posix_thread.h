@@ -25,52 +25,27 @@
 //
 //========================================================================
 
-#include "internal.h"
+#include <pthread.h>
 
-#include <assert.h>
-#include <string.h>
+#define _GLFW_PLATFORM_TLS_STATE    _GLFWtlsPOSIX   posix
+#define _GLFW_PLATFORM_MUTEX_STATE  _GLFWmutexPOSIX posix
 
 
-//////////////////////////////////////////////////////////////////////////
-//////                       GLFW platform API                      //////
-//////////////////////////////////////////////////////////////////////////
-
-GLFWbool _glfwPlatformCreateTls(_GLFWtls* tls)
+// POSIX-specific thread local storage data
+//
+typedef struct _GLFWtlsPOSIX
 {
-    assert(tls->posix.allocated == GLFW_FALSE);
+    GLFWbool        allocated;
+    pthread_key_t   key;
 
-    if (pthread_key_create(&tls->posix.key, NULL) != 0)
-    {
-        _glfwInputError(GLFW_PLATFORM_ERROR,
-                        "POSIX: Failed to create context TLS");
-        return GLFW_FALSE;
-    }
+} _GLFWtlsPOSIX;
 
-    tls->posix.allocated = GLFW_TRUE;
-    return GLFW_TRUE;
-}
-
-void _glfwPlatformDestroyTls(_GLFWtls* tls)
+// POSIX-specific mutex data
+//
+typedef struct _GLFWmutexPOSIX
 {
-    if (tls->posix.allocated)
-        pthread_key_delete(tls->posix.key);
-    memset(tls, 0, sizeof(_GLFWtls));
-}
+    GLFWbool        allocated;
+    pthread_mutex_t handle;
 
-void* _glfwPlatformGetTls(_GLFWtls* tls)
-{
-    assert(tls->posix.allocated == GLFW_TRUE);
-    return pthread_getspecific(tls->posix.key);
-}
-
-void _glfwPlatformSetTls(_GLFWtls* tls, void* value)
-{
-    assert(tls->posix.allocated == GLFW_TRUE);
-    pthread_setspecific(tls->posix.key, value);
-}
-
-GLFWbool _glfwPlatformIsValidTls(_GLFWtls* tls)
-{
-    return tls->posix.allocated;
-}
+} _GLFWmutexPOSIX;
 
