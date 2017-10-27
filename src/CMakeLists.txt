@@ -1,5 +1,5 @@
 
-set(common_HEADERS internal.h
+set(common_HEADERS internal.h mappings.h
                    "${GLFW_BINARY_DIR}/src/glfw_config.h"
                    "${GLFW_SOURCE_DIR}/include/GLFW/glfw3.h"
                    "${GLFW_SOURCE_DIR}/include/GLFW/glfw3native.h")
@@ -174,7 +174,15 @@ if (MSVC)
 endif()
 
 if (GLFW_INSTALL)
-    install(TARGETS glfw EXPORT glfwTargets DESTINATION lib${LIB_SUFFIX})
-    install(TARGETS glfwpp EXPORT glfwTargets DESTINATION lib${LIB_SUFFIX})
+    install(TARGETS glfw
+            EXPORT glfwTargets
+            RUNTIME DESTINATION "bin"
+            ARCHIVE DESTINATION "lib${LIB_SUFFIX}"
+            LIBRARY DESTINATION "lib${LIB_SUFFIX}")
+    install(TARGETS glfwpp 
+            EXPORT glfwTargets D
+            RUNTIME DESTINATION "bin"
+            ARCHIVE DESTINATION "lib${LIB_SUFFIX}"
+            LIBRARY DESTINATION "lib${LIB_SUFFIX}"
 endif()
 

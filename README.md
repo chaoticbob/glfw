@@ -36,10 +36,10 @@ fixes live in [other branches](https://github.com/glfw/glfw/branches/all) until
 they are stable enough to merge.
 
 If you are new to GLFW, you may find the
-[tutorial](http://www.glfw.org/docs/latest/quick.html) for GLFW
-3 useful.  If you have used GLFW 2 in the past, there is a
-[transition guide](http://www.glfw.org/docs/latest/moving.html) for moving to
-the GLFW 3 API.
+[tutorial](http://www.glfw.org/docs/latest/quick.html) for GLFW 3 useful.  If
+you have used GLFW 2 in the past, there is a [transition
+guide](http://www.glfw.org/docs/latest/moving.html) for moving to the GLFW
+3 API.
 
 
 ## Compiling GLFW
@@ -53,12 +53,11 @@ MinGW-w64, on macOS with Clang and on Linux and other Unix-like systems with GCC
 and Clang.  It will likely compile in other environments as well, but this is
 not regularly tested.
 
-There are also [pre-compiled Windows
-binaries](http://www.glfw.org/download.html) available for all compilers
-supported on that platform.
+There are [pre-compiled Windows binaries](http://www.glfw.org/download.html)
+available for all supported compilers.
 
 See the [compilation guide](http://www.glfw.org/docs/latest/compile.html) for
-more information about how to compile GLFW.
+more information about how to compile GLFW yourself.
 
 
 ## Using GLFW
@@ -108,11 +107,11 @@ located in the `deps/` directory.
  - [Vulkan headers](https://www.khronos.org/registry/vulkan/) for Vulkan tests
 
 The Vulkan example additionally requires the Vulkan SDK to be installed, or it
-will not be included in the build.  On macOS you need to set the path to the
-MoltenVK SDK manually as it has no standard location.
+will not be included in the build.  On macOS you need to provide the path to the
+MoltenVK SDK manually as it has no standard installation location.
 
-The documentation is generated with [Doxygen](http://doxygen.org/).  If CMake
-does not find Doxygen, the documentation will not be generated when you build.
+The documentation is generated with [Doxygen](http://doxygen.org/) if CMake can
+find that tool.
 
 
 ## Reporting bugs
@@ -127,6 +126,16 @@ information on what to include when reporting a bug.
 
 - Added `glfwGetError` function for querying the last error code and its
   description (#970)
+- Added `glfwUpdateGamepadMappings` function for importing gamepad mappings in
+  SDL\_GameControllerDB format (#900)
+- Added `glfwJoystickIsGamepad` function for querying whether a joystick has
+  a gamepad mapping (#900)
+- Added `glfwGetJoystickGUID` function for querying the SDL compatible GUID of
+  a joystick (#900)
+- Added `glfwGetGamepadName` function for querying the name provided by the
+  gamepad mapping (#900)
+- Added `glfwGetGamepadState` function, `GLFW_GAMEPAD_*` and `GLFWgamepadstate`
+  for retrieving gamepad input state (#900)
 - Added `glfwRequestWindowAttention` function for requesting attention from the
   user (#732,#988)
 - Added `glfwGetKeyScancode` function that allows retrieving platform dependent
@@ -136,7 +145,7 @@ information on what to include when reporting a bug.
 - Added `glfwSetWindowAttrib` function for changing window attributes (#537)
 - Added `glfwGetJoystickHats` function for querying joystick hats
   (#889,#906,#934)
-- Added `glfwInitHint` function for setting library initialization hints
+- Added `glfwInitHint` and `glfwInitHintString` for setting initialization hints
 - Added headless [OSMesa](http://mesa3d.org/osmesa.html) backend (#850)
 - Added definition of `GLAPIENTRY` to public header
 - Added `GLFW_CENTER_CURSOR` window hint for controlling cursor centering
@@ -147,6 +156,8 @@ information on what to include when reporting a bug.
 - Added macOS specific `GLFW_COCOA_GRAPHICS_SWITCHING` window hint (#377,#935)
 - Added macOS specific `GLFW_COCOA_CHDIR_RESOURCES` init hint
 - Added macOS specific `GLFW_COCOA_MENUBAR` init hint
+- Added X11 specific `GLFW_X11_WM_CLASS_NAME` and `GLFW_X11_WM_CLASS_CLASS` init
+  hints (#893)
 - Added `GLFW_INCLUDE_ES32` for including the OpenGL ES 3.2 header
 - Added `GLFW_OSMESA_CONTEXT_API` for creating OpenGL contexts with
   [OSMesa](https://www.mesa3d.org/osmesa.html) (#281)
@@ -174,6 +185,7 @@ information on what to include when reporting a bug.
 - [Win32] Bugfix: Vulkan libraries have a new path as of SDK 1.0.42.0 (#956)
 - [Win32] Bugfix: Monitors with no display devices were not enumerated (#960)
 - [Win32] Bugfix: Monitor events were not emitted (#784)
+- [Win32] Bugfix: The Cygwin DLL was installed to the wrong directory (#1035)
 - [X11] Moved to XI2 `XI_RawMotion` for disable cursor mode motion input (#125)
 - [X11] Replaced `_GLFW_HAS_XF86VM` compile-time option with dynamic loading
 - [X11] Bugfix: `glfwGetVideoMode` would segfault on Cygwin/X
@@ -207,6 +219,8 @@ information on what to include when reporting a bug.
 - [WGL] Added support for `WGL_EXT_colorspace` for OpenGL ES contexts
 - [WGL] Added support for `WGL_ARB_create_context_no_error`
 - [GLX] Added support for `GLX_ARB_create_context_no_error`
+- [GLX] Bugfix: Context creation could segfault if no GLXFBConfigs were
+                available (#1040)
 - [EGL] Added support for `EGL_KHR_get_all_proc_addresses` (#871)
 - [EGL] Added support for `EGL_KHR_context_flush_control`
 - [EGL] Bugfix: The test for `EGL_RGB_BUFFER` was invalid
@@ -247,7 +261,9 @@ skills.
  - blanco
  - Kyle Brenneman
  - Martin Capitanio
+ - David Carlier
  - Chi-kwan Chan
+ - Michał Cichoń
  - Lambert Clara
  - Andrew Corrigan
  - Noel Cower

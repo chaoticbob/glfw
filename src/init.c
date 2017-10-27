@@ -26,11 +26,13 @@
 //========================================================================
 
 #include "internal.h"
+#include "mappings.h"
 
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <assert.h>
 
 
 // The global variables below comprise all global data in GLFW.
@@ -47,10 +49,14 @@ static _GLFWerror _glfwMainThreadError;
 static GLFWerrorfun _glfwErrorCallback;
 static _GLFWinitconfig _glfwInitHints =
 {
-    GLFW_TRUE, // hat buttons
+    GLFW_TRUE,      // hat buttons
     {
-        GLFW_TRUE, // menubar
-        GLFW_TRUE  // chdir
+        GLFW_TRUE,  // macOS menu bar
+        GLFW_TRUE   // macOS bundle chdir
+    },
+    {
+        "",         // X11 WM_CLASS name
+        ""          // X11 WM_CLASS class
     }
 };
 
@@ -110,6 +116,10 @@ static void terminate(void)
     free(_glfw.monitors);
     _glfw.monitors = NULL;
     _glfw.monitorCount = 0;
+
+    free(_glfw.mappings);
+    _glfw.mappings = NULL;
+    _glfw.mappingCount = 0;
 
     _glfwTerminateVulkan();
     _glfwPlatformTerminate();
@@ -209,8 +219,8 @@ GLFWAPI int glfwInit(void)
     _glfw.initialized = GLFW_TRUE;
     _glfw.timer.offset = _glfwPlatformGetTimerValue();
 
-    // Not all window hints have zero as their default value
     glfwDefaultWindowHints();
+    glfwUpdateGamepadMappings(_glfwDefaultMappings);
 
     return GLFW_TRUE;
 }
@@ -238,7 +248,28 @@ GLFWAPI void glfwInitHint(int hint, int value)
             return;
     }
 
-    _glfwInputError(GLFW_INVALID_ENUM, "Invalid init hint %i", hint);
+    _glfwInputError(GLFW_INVALID_ENUM,
+                    "Invalid integer type init hint 0x%08X", hint);
+}
+
+GLFWAPI void glfwInitHintString(int hint, const char* value)
+{
+    assert(value != NULL);
+
+    switch (hint)
+    {
+        case GLFW_X11_WM_CLASS_NAME:
+            strncpy(_glfwInitHints.x11.className, value,
+                    sizeof(_glfwInitHints.x11.className) - 1);
+            break;
+        case GLFW_X11_WM_CLASS_CLASS:
+            strncpy(_glfwInitHints.x11.classClass, value,
+                    sizeof(_glfwInitHints.x11.classClass) - 1);
+            break;
+    }
+
+    _glfwInputError(GLFW_INVALID_ENUM,
+                    "Invalid string type init hint 0x%08X", hint);
 }
 
 GLFWAPI void glfwGetVersion(int* major, int* minor, int* rev)
