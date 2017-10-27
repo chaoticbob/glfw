@@ -54,6 +54,8 @@
 #define _GLFW_POLL_BUTTONS      2
 #define _GLFW_POLL_ALL          (_GLFW_POLL_AXES | _GLFW_POLL_BUTTONS)
 
+#define _GLFW_MESSAGE_SIZE      1024
+
 typedef int GLFWbool;
 
 typedef struct _GLFWerror       _GLFWerror;
@@ -263,7 +265,7 @@ struct _GLFWerror
 {
     _GLFWerror*     next;
     int             code;
-    char            description[1024];
+    char            description[_GLFW_MESSAGE_SIZE];
 };
 
 /*! @brief Initialization configuration.
@@ -357,6 +359,7 @@ struct _GLFWfbconfig
     int         samples;
     GLFWbool    sRGB;
     GLFWbool    doublebuffer;
+    GLFWbool    transparent;
     uintptr_t   handle;
 };
 
@@ -638,6 +641,7 @@ const char* _glfwPlatformGetScancodeName(int scancode);
 int _glfwPlatformGetKeyScancode(int key);
 
 void _glfwPlatformGetMonitorPos(_GLFWmonitor* monitor, int* xpos, int* ypos);
+void _glfwPlatformGetMonitorContentScale(_GLFWmonitor* monitor, float* xscale, float* yscale);
 GLFWvidmode* _glfwPlatformGetVideoModes(_GLFWmonitor* monitor, int* count);
 void _glfwPlatformGetVideoMode(_GLFWmonitor* monitor, GLFWvidmode* mode);
 void _glfwPlatformGetGammaRamp(_GLFWmonitor* monitor, GLFWgammaramp* ramp);
@@ -667,6 +671,7 @@ void _glfwPlatformSetWindowSizeLimits(_GLFWwindow* window, int minwidth, int min
 void _glfwPlatformSetWindowAspectRatio(_GLFWwindow* window, int numer, int denom);
 void _glfwPlatformGetFramebufferSize(_GLFWwindow* window, int* width, int* height);
 void _glfwPlatformGetWindowFrameSize(_GLFWwindow* window, int* left, int* top, int* right, int* bottom);
+void _glfwPlatformGetWindowContentScale(_GLFWwindow* window, float* xscale, float* yscale);
 void _glfwPlatformIconifyWindow(_GLFWwindow* window);
 void _glfwPlatformRestoreWindow(_GLFWwindow* window);
 void _glfwPlatformMaximizeWindow(_GLFWwindow* window);
@@ -679,6 +684,7 @@ int _glfwPlatformWindowFocused(_GLFWwindow* window);
 int _glfwPlatformWindowIconified(_GLFWwindow* window);
 int _glfwPlatformWindowVisible(_GLFWwindow* window);
 int _glfwPlatformWindowMaximized(_GLFWwindow* window);
+int _glfwPlatformFramebufferTransparent(_GLFWwindow* window);
 void _glfwPlatformSetWindowResizable(_GLFWwindow* window, GLFWbool enabled);
 void _glfwPlatformSetWindowDecorated(_GLFWwindow* window, GLFWbool enabled);
 void _glfwPlatformSetWindowFloating(_GLFWwindow* window, GLFWbool enabled);
@@ -773,7 +779,7 @@ void _glfwInputWindowCloseRequest(_GLFWwindow* window);
  *  @param[in] monitor The new desired monitor, or `NULL`.
  *  @ingroup event
  */
-void _glfwInputWindowMonitorChange(_GLFWwindow* window, _GLFWmonitor* monitor);
+void _glfwInputWindowMonitor(_GLFWwindow* window, _GLFWmonitor* monitor);
 
 /*! @brief Notifies shared code of a physical key event.
  *  @param[in] window The window that received the event.

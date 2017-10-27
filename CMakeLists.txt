@@ -183,7 +183,7 @@ endif()
 #--------------------------------------------------------------------
 if (GLFW_VULKAN_STATIC)
     if (VULKAN_FOUND AND VULKAN_STATIC_LIBRARY)
-        list(APPEND glfw_LIBRARIES ${VULKAN_STATIC_LIBRARY} ${GLFW_VULKAN_DEPS})
+        list(APPEND glfw_LIBRARIES "${VULKAN_STATIC_LIBRARY}" ${GLFW_VULKAN_DEPS})
         if (BUILD_SHARED_LIBS)
             message(WARNING "Linking Vulkan loader static library into GLFW")
         endif()
@@ -247,38 +247,28 @@ if (_GLFW_X11)
 
     # Check for XRandR (modern resolution switching and gamma control)
     if (NOT X11_Xrandr_FOUND)
-        message(FATAL_ERROR "The RandR library and headers were not found")
+        message(FATAL_ERROR "The RandR headers were not found")
     endif()
-
-    list(APPEND glfw_INCLUDE_DIRS "${X11_Xrandr_INCLUDE_PATH}")
-    list(APPEND glfw_LIBRARIES "${X11_Xrandr_LIB}")
-    list(APPEND glfw_PKG_DEPS "xrandr")
 
     # Check for Xinerama (legacy multi-monitor support)
     if (NOT X11_Xinerama_FOUND)
-        message(FATAL_ERROR "The Xinerama library and headers were not found")
+        message(FATAL_ERROR "The Xinerama headers were not found")
     endif()
-
-    list(APPEND glfw_INCLUDE_DIRS "${X11_Xinerama_INCLUDE_PATH}")
-    list(APPEND glfw_LIBRARIES "${X11_Xinerama_LIB}")
-    list(APPEND glfw_PKG_DEPS "xinerama")
 
     # Check for Xkb (X keyboard extension)
     if (NOT X11_Xkb_FOUND)
         message(FATAL_ERROR "The X keyboard extension headers were not found")
     endif()
 
-    list(APPEND glfw_INCLUDE_DIR "${X11_Xkb_INCLUDE_PATH}")
-
-    # Check for Xcursor
+    # Check for Xcursor (cursor creation from RGBA images)
     if (NOT X11_Xcursor_FOUND)
-        message(FATAL_ERROR "The Xcursor libraries and headers were not found")
+        message(FATAL_ERROR "The Xcursor headers were not found")
     endif()
 
-    list(APPEND glfw_INCLUDE_DIR "${X11_Xcursor_INCLUDE_PATH}")
-    list(APPEND glfw_LIBRARIES "${X11_Xcursor_LIB}")
-    list(APPEND glfw_PKG_DEPS "xcursor")
-
+    list(APPEND glfw_INCLUDE_DIRS "${X11_Xrandr_INCLUDE_PATH}"
+                                  "${X11_Xinerama_INCLUDE_PATH}"
+                                  "${X11_Xkb_INCLUDE_PATH}"
+                                  "${X11_Xcursor_INCLUDE_PATH}")
 endif()
 
 #--------------------------------------------------------------------
@@ -286,7 +276,7 @@ endif()
 #--------------------------------------------------------------------
 if (_GLFW_WAYLAND)
     find_package(ECM REQUIRED NO_MODULE)
-    list(APPEND CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
+    list(APPEND CMAKE_MODULE_PATH "${ECM_MODULE_PATH}")
 
     find_package(Wayland REQUIRED)
     find_package(WaylandScanner REQUIRED)

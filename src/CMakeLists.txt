@@ -10,7 +10,7 @@ set(common_SOURCES_CXX glfwpp.cpp)
 
 if (_GLFW_COCOA)
     set(glfw_HEADERS ${common_HEADERS} cocoa_platform.h cocoa_joystick.h
-                     posix_thread.h nsgl_context.h egl_context.h osmesa_context.c)
+                     posix_thread.h nsgl_context.h egl_context.h osmesa_context.h)
     set(glfw_SOURCES ${common_SOURCES} cocoa_init.m cocoa_joystick.m
                      cocoa_monitor.m cocoa_window.m cocoa_time.c posix_thread.c
                      nsgl_context.m egl_context.c osmesa_context.c)
@@ -44,11 +44,11 @@ elseif (_GLFW_WAYLAND)
 
     ecm_add_wayland_client_protocol(glfw_SOURCES
         PROTOCOL
-        ${WAYLAND_PROTOCOLS_PKGDATADIR}/unstable/relative-pointer/relative-pointer-unstable-v1.xml
+        "${WAYLAND_PROTOCOLS_PKGDATADIR}/unstable/relative-pointer/relative-pointer-unstable-v1.xml"
         BASENAME relative-pointer-unstable-v1)
     ecm_add_wayland_client_protocol(glfw_SOURCES
         PROTOCOL
-        ${WAYLAND_PROTOCOLS_PKGDATADIR}/unstable/pointer-constraints/pointer-constraints-unstable-v1.xml
+        "${WAYLAND_PROTOCOLS_PKGDATADIR}/unstable/pointer-constraints/pointer-constraints-unstable-v1.xml"
         BASENAME pointer-constraints-unstable-v1)
 elseif (_GLFW_MIR)
     set(glfw_HEADERS ${common_HEADERS} mir_platform.h linux_joystick.h
@@ -69,6 +69,18 @@ if (APPLE)
     set_source_files_properties(${glfw_SOURCES} PROPERTIES LANGUAGE C)
 endif()
 
+# Make GCC and Clang warn about declarations that VS 2010 and 2012 won't accept
+# for all source files that VS will build
+if (${CMAKE_C_COMPILER_ID} STREQUAL GNU OR ${CMAKE_C_COMPILER_ID} STREQUAL Clang)
+    if (WIN32)
+        set(windows_SOURCES ${glfw_SOURCES})
+    else()
+        set(windows_SOURCES ${common_SOURCES})
+    endif()
+    set_source_files_properties(${windows_SOURCES} PROPERTIES
+        COMPILE_FLAGS -Wdeclaration-after-statement)
+endif()
+
 add_library(glfw ${glfw_SOURCES} ${glfw_HEADERS})
 set_target_properties(glfw PROPERTIES
                       OUTPUT_NAME ${GLFW_LIB_NAME}
@@ -77,11 +89,12 @@ set_target_properties(glfw PROPERTIES
                       POSITION_INDEPENDENT_CODE ON
                       FOLDER "GLFW3")
 
-target_compile_definitions(glfw PRIVATE -D_GLFW_USE_CONFIG_H)
+target_compile_definitions(glfw PRIVATE
+                           _GLFW_USE_CONFIG_H
+                           $<$<BOOL:${UNIX}>:_XOPEN_SOURCE=600>)
 target_include_directories(glfw PUBLIC
-                           $<BUILD_INTERFACE:${GLFW_SOURCE_DIR}/include>
-                           $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>
-                           ${VULKAN_INCLUDE_DIR})
+                           "$<BUILD_INTERFACE:${GLFW_SOURCE_DIR}/include>"
+                           "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>")
 target_include_directories(glfw PRIVATE
                            "${GLFW_SOURCE_DIR}/src"
                            "${GLFW_BINARY_DIR}/src"
@@ -159,7 +172,7 @@ if (BUILD_SHARED_LIBS)
         target_compile_options(glfwpp PRIVATE "-fvisibility=hidden")
     endif()
 
-    target_compile_definitions(glfw INTERFACE -DGLFW_DLL)
+    target_compile_definitions(glfw INTERFACE GLFW_DLL)
     target_link_libraries(glfw PRIVATE ${glfw_LIBRARIES})
     target_compile_definitions(glfwpp INTERFACE -DGLFW_DLL)
     target_link_libraries(glfwpp PRIVATE ${glfw_LIBRARIES})
