@@ -31,7 +31,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <glad/glad.h>
+#include <glad/gl.h>
+#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
 /**
@@ -312,7 +313,7 @@ int main(int argc, char *argv[])
     }
 
     glfwWindowHint(GLFW_DEPTH_BITS, 16);
-    glfwWindowHint(GLFW_TRANSPARENT, GLFW_TRUE);
+    glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
 
     window = glfwCreateWindow( 300, 300, "Gears", NULL, NULL );
     if (!window)
@@ -327,7 +328,7 @@ int main(int argc, char *argv[])
     glfwSetKeyCallback(window, key);
 
     glfwMakeContextCurrent(window);
-    gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
+    gladLoadGL(glfwGetProcAddress);
     glfwSwapInterval( 1 );
 
     glfwGetFramebufferSize(window, &width, &height);
