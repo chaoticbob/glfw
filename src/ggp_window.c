@@ -545,11 +545,11 @@ void _glfwPlatformSetCursor(_GLFWwindow* window, _GLFWcursor* cursor)
   // @TODO: Add Me!
 }
 
-void _glfwPlatformSetClipboardString(_GLFWwindow* window, const char* string)
+void _glfwPlatformSetClipboardString(const char* string)
 {
 }
 
-const char* _glfwPlatformGetClipboardString(_GLFWwindow* window)
+const char* _glfwPlatformGetClipboardString(void)
 {
   return NULL;
 }
