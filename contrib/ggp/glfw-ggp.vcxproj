@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|GGP">
+      <Configuration>Debug</Configuration>
+      <Platform>GGP</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|GGP">
+      <Configuration>Release</Configuration>
+      <Platform>GGP</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\GLFW\config\glfw_config.h" />
+    <ClInclude Include="..\..\include\GLFW\glfw3.h" />
+    <ClInclude Include="..\..\include\GLFW\glfw3native.h" />
+    <ClInclude Include="..\..\src\ggp_joystick.h" />
+    <ClInclude Include="..\..\src\ggp_platform.h" />
+    <ClInclude Include="..\..\src\internal.h" />
+    <ClInclude Include="..\..\src\posix_time.h" />
+    <ClInclude Include="..\..\src\posix_tls.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\context.c" />
+    <ClCompile Include="..\..\src\ggp_init.c" />
+    <ClCompile Include="..\..\src\ggp_joystick.c" />
+    <ClCompile Include="..\..\src\ggp_monitor.c" />
+    <ClCompile Include="..\..\src\ggp_window.c" />
+    <ClCompile Include="..\..\src\init.c" />
+    <ClCompile Include="..\..\src\input.c" />
+    <ClCompile Include="..\..\src\monitor.c" />
+    <ClCompile Include="..\..\src\posix_thread.c" />
+    <ClCompile Include="..\..\src\posix_time.c" />
+    <ClCompile Include="..\..\src\vulkan.c" />
+    <ClCompile Include="..\..\src\window.c" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{7CE1F7F5-5DE0-4D67-9950-09C072A2B505}</ProjectGuid>
+    <RootNamespace>codelab</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|GGP'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|GGP'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>Ggp_Clang</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|GGP'">
+    <TargetName>libglfw</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|GGP'">
+    <TargetName>libglfw</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|GGP'">
+    <ClCompile>
+      <PreprocessorDefinitions>_GLFW_GGP;VK_USE_PLATFORM_GGP;_GNU_SOURCE;_GLFW_USE_CONFIG_H</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\include;$(ProjectDir)\glfw_config;$(ProjectDir)..\..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <UseMultiToolTask>true</UseMultiToolTask>
+    </ClCompile>
+    <Link>
+      <SharedLibrarySearchPath>
+      </SharedLibrarySearchPath>
+      <LibraryDependencies>libggp.so;libvulkan.so;libpulse.so;%(LibraryDependencies)</LibraryDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|GGP'">
+    <Link>
+      <SharedLibrarySearchPath>
+      </SharedLibrarySearchPath>
+      <LibraryDependencies>libggp.so;libvulkan.so;libpulse.so;%(LibraryDependencies)</LibraryDependencies>
+    </Link>
+    <ClCompile>
+      <PreprocessorDefinitions>_GLFW_GGP;VK_USE_PLATFORM_GGP;_GNU_SOURCE;_GLFW_USE_CONFIG_H</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\include;$(ProjectDir)\glfw_config;$(ProjectDir)..\..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <UseMultiToolTask>true</UseMultiToolTask>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

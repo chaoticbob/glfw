@@ -126,6 +126,7 @@ typedef enum VkStructureType
     VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR = 1000006000,
     VK_STRUCTURE_TYPE_MIR_SURFACE_CREATE_INFO_KHR = 1000007000,
     VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR = 1000009000,
+    VK_STRUCTURE_TYPE_STREAM_DESCRIPTOR_SURFACE_CREATE_INFO_GGP = 1000049000,
     VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK = 1000053000,
     VK_STRUCTURE_TYPE_MAX_ENUM = 0x7FFFFFFF
 } VkStructureType;
@@ -190,6 +191,8 @@ typedef void (APIENTRY * PFN_vkVoidFunction)(void);
  #include "mir_platform.h"
 #elif defined(_GLFW_OSMESA)
  #include "null_platform.h"
+#elif defined(_GLFW_GGP)
+ #include "ggp_platform.h"
 #else
  #error "No supported window creation API selected"
 #endif
@@ -589,6 +592,8 @@ struct _GLFWlibrary
         GLFWbool        KHR_wayland_surface;
 #elif defined(_GLFW_MIR)
         GLFWbool        KHR_mir_surface;
+#elif defined(_GLFW_GGP)
+        GLFWbool        GGP_stream_descriptor_surface;
 #endif
     } vk;
 
