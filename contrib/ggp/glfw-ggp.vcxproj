@@ -11,7 +11,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\GLFW\config\glfw_config.h" />
     <ClInclude Include="..\..\include\GLFW\glfw3.h" />
     <ClInclude Include="..\..\include\GLFW\glfw3native.h" />
     <ClInclude Include="..\..\src\ggp_joystick.h" />
@@ -61,6 +60,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|GGP'">
     <TargetName>libglfw</TargetName>
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|GGP'">
     <TargetName>libglfw</TargetName>
