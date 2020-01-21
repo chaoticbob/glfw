@@ -37,10 +37,6 @@ cmake_dependent_option(GLFW_USE_WAYLAND "Use Wayland for window creation" OFF
 cmake_dependent_option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC runtime library DLL" ON
                        "MSVC" OFF)
 
-if (BUILD_SHARED_LIBS)
-    set(_GLFW_BUILD_DLL 1)
-endif()
-
 if (BUILD_SHARED_LIBS AND UNIX)
     # On Unix-like systems, shared libraries can use the soname system.
     set(GLFW_LIB_NAME glfw)
@@ -203,7 +199,7 @@ if (_GLFW_X11)
 
     # Set up library and include paths
     list(APPEND glfw_INCLUDE_DIRS "${X11_X11_INCLUDE_PATH}")
-    list(APPEND glfw_LIBRARIES "${X11_X11_LIB}" "${CMAKE_THREAD_LIBS_INIT}")
+    list(APPEND glfw_LIBRARIES "${X11_X11_LIB}")
 
     # Check for XRandR (modern resolution switching and gamma control)
     if (NOT X11_Xrandr_INCLUDE_PATH)
@@ -245,7 +241,7 @@ if (_GLFW_WAYLAND)
     list(APPEND glfw_PKG_DEPS "wayland-egl")
 
     list(APPEND glfw_INCLUDE_DIRS "${Wayland_INCLUDE_DIRS}")
-    list(APPEND glfw_LIBRARIES "${Wayland_LIBRARIES}" "${CMAKE_THREAD_LIBS_INIT}")
+    list(APPEND glfw_LIBRARIES "${Wayland_LIBRARIES}")
 
     find_package(XKBCommon REQUIRED)
     list(APPEND glfw_INCLUDE_DIRS "${XKBCOMMON_INCLUDE_DIRS}")
@@ -269,7 +265,6 @@ endif()
 #--------------------------------------------------------------------
 if (_GLFW_OSMESA)
     find_package(OSMesa REQUIRED)
-    list(APPEND glfw_LIBRARIES "${CMAKE_THREAD_LIBS_INIT}")
 endif()
 
 #--------------------------------------------------------------------
@@ -280,11 +275,10 @@ if (_GLFW_COCOA)
     list(APPEND glfw_LIBRARIES
         "-framework Cocoa"
         "-framework IOKit"
-        "-framework CoreFoundation"
-        "-framework CoreVideo")
+        "-framework CoreFoundation")
 
     set(glfw_PKG_DEPS "")
-    set(glfw_PKG_LIBS "-framework Cocoa -framework IOKit -framework CoreFoundation -framework CoreVideo")
+    set(glfw_PKG_LIBS "-framework Cocoa -framework IOKit -framework CoreFoundation")
 endif()
 
 #--------------------------------------------------------------------
@@ -319,8 +313,6 @@ configure_package_config_file(src/glfw3Config.cmake.in
 write_basic_package_version_file(src/glfw3ConfigVersion.cmake
                                  VERSION ${GLFW_VERSION}
                                  COMPATIBILITY SameMajorVersion)
-
-configure_file(src/glfw_config.h.in src/glfw_config.h @ONLY)
 
 configure_file(src/glfw3.pc.in src/glfw3.pc @ONLY)
 
@@ -359,7 +351,7 @@ if (GLFW_INSTALL)
     install(FILES "${GLFW_BINARY_DIR}/src/glfw3.pc"
             DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
 
-    if (GLFW_BUILD_DOCS)
+    if (DOXYGEN_FOUND AND GLFW_BUILD_DOCS)
         install(DIRECTORY "${GLFW_BINARY_DIR}/docs/html"
                 DESTINATION "${CMAKE_INSTALL_DOCDIR}")
     endif()
