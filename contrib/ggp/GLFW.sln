@@ -1,9 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.329
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glfw-ggp", "glfw-ggp.vcxproj", "{7CE1F7F5-5DE0-4D67-9950-09C072A2B505}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "triangle-vulkan", "triangle-vulkan.vcxproj", "{0662C2C4-501F-47D4-AEC3-1D908452DD5B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7CE1F7F5-5DE0-4D67-9950-09C072A2B505} = {7CE1F7F5-5DE0-4D67-9950-09C072A2B505}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +20,15 @@ Global
 		{7CE1F7F5-5DE0-4D67-9950-09C072A2B505}.Debug|GGP.Build.0 = Debug|GGP
 		{7CE1F7F5-5DE0-4D67-9950-09C072A2B505}.Release|GGP.ActiveCfg = Release|GGP
 		{7CE1F7F5-5DE0-4D67-9950-09C072A2B505}.Release|GGP.Build.0 = Release|GGP
+		{0662C2C4-501F-47D4-AEC3-1D908452DD5B}.Debug|GGP.ActiveCfg = Debug|GGP
+		{0662C2C4-501F-47D4-AEC3-1D908452DD5B}.Debug|GGP.Build.0 = Debug|GGP
+		{0662C2C4-501F-47D4-AEC3-1D908452DD5B}.Release|GGP.ActiveCfg = Release|GGP
+		{0662C2C4-501F-47D4-AEC3-1D908452DD5B}.Release|GGP.Build.0 = Release|GGP
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {87C3A44E-32BA-41ED-8B03-DCCD065C6E07}
 	EndGlobalSection
 EndGlobal

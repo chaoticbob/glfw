@@ -447,6 +447,13 @@ void _glfwPlatformGetWindowFrameSize(_GLFWwindow* window, int* left, int* top,
   }
 }
 
+void _glfwPlatformGetWindowContentScale(_GLFWwindow* window,
+                                        float* xscale, float* yscale)
+{
+  *xscale = 1.0f;
+  *yscale = 1.0f;
+}
+
 void _glfwPlatformIconifyWindow(_GLFWwindow* window) {}
 
 void _glfwPlatformRestoreWindow(_GLFWwindow* window) {}
@@ -458,17 +465,31 @@ int _glfwPlatformWindowMaximized(_GLFWwindow* window)
   return (window != NULL) ? GLFW_TRUE : GLFW_FALSE;
 }
 
+int _glfwPlatformWindowHovered(_GLFWwindow* window) { return GLFW_FALSE; }
+
+int _glfwPlatformFramebufferTransparent(_GLFWwindow* window) { return GLFW_FALSE; }
+
 void _glfwPlatformSetWindowResizable(_GLFWwindow* window, GLFWbool enabled) {}
 
 void _glfwPlatformSetWindowDecorated(_GLFWwindow* window, GLFWbool enabled) {}
 
 void _glfwPlatformSetWindowFloating(_GLFWwindow* window, GLFWbool enabled) {}
 
+float _glfwPlatformGetWindowOpacity(_GLFWwindow* window) { return 1.0f; };
+
+void _glfwPlatformSetWindowOpacity(_GLFWwindow* window, float opacity) {};
+
+void _glfwPlatformSetRawMouseMotion(_GLFWwindow *window, GLFWbool enabled) {}
+
+GLFWbool _glfwPlatformRawMouseMotionSupported(void) { return GLFW_FALSE; }
+
 void _glfwPlatformShowWindow(_GLFWwindow* window) {}
 
 void _glfwPlatformUnhideWindow(_GLFWwindow* window) {}
 
 void _glfwPlatformHideWindow(_GLFWwindow* window) {}
+
+void _glfwPlatformRequestWindowAttention(_GLFWwindow* window) {}
 
 void _glfwPlatformFocusWindow(_GLFWwindow* window) {}
 
@@ -522,6 +543,11 @@ void _glfwPlatformSetCursorPos(_GLFWwindow* window, double x, double y)
 void _glfwPlatformSetCursorMode(_GLFWwindow* window, int mode)
 {
   // @TODO: Add Me!
+}
+
+const char* _glfwPlatformGetScancodeName(int scancode)
+{
+  return NULL;
 }
 
 int _glfwPlatformCreateCursor(_GLFWcursor* cursor, const GLFWimage* image,
