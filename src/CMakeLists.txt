@@ -34,6 +34,11 @@ elseif (_GLFW_OSMESA)
                                 posix_thread.h osmesa_context.h null_init.c
                                 null_monitor.c null_window.c null_joystick.c
                                 posix_time.c posix_thread.c osmesa_context.c)
+elseif (_GLFW_GGP)
+    target_sources(glfw PRIVATE ggp_platform.h ggp_joystick.h wgl_context.h
+                                egl_context.h osmesa_context.h ggp_init.c
+                                ggp_joystick.c ggp_monitor.c posix_time.c
+                                posix_thread.c ggp_window.c)
 endif()
 
 if (_GLFW_X11 OR _GLFW_WAYLAND)
@@ -134,6 +139,11 @@ endif()
 # NOTE: MinGW-w64 and Visual C++ do /not/ need this hack.
 if (MINGW)
     target_compile_definitions(glfw PRIVATE UNICODE WINVER=0x0501)
+endif()
+
+if (GGP)
+    target_compile_definitions(glfw PUBLIC VK_USE_PLATFORM_GGP _GNU_SOURCE)
+    target_link_directories(glfw PUBLIC "${GGP_LIBRARY_PATH}/lib")
 endif()
 
 if (BUILD_SHARED_LIBS)

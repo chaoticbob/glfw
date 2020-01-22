@@ -36,6 +36,11 @@ cmake_dependent_option(GLFW_USE_WAYLAND "Use Wayland for window creation" OFF
                        "UNIX;NOT APPLE" OFF)
 cmake_dependent_option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC runtime library DLL" ON
                        "MSVC" OFF)
+											 
+# HACK: Detect GGP - not sure where to put this, so here for now
+if (GGP_TOOLCHAIN_PATH)
+    set(GGP TRUE)
+endif()
 
 if (BUILD_SHARED_LIBS AND UNIX)
     # On Unix-like systems, shared libraries can use the soname system.
@@ -146,8 +151,13 @@ elseif (APPLE)
     set(_GLFW_COCOA 1)
     message(STATUS "Using Cocoa for window creation")
 elseif (UNIX)
-    set(_GLFW_X11 1)
-    message(STATUS "Using X11 for window creation")
+    if(GGP)
+        set(_GLFW_GGP 1)
+        message(STATUS "Using GGP for window creation")
+    else()    
+        set(_GLFW_X11 1)
+        message(STATUS "Using X11 for window creation")
+    endif()
 else()
     message(FATAL_ERROR "No supported platform was detected")
 endif()
@@ -282,6 +292,13 @@ if (_GLFW_COCOA)
 endif()
 
 #--------------------------------------------------------------------
+# Use GGP for window creation
+#--------------------------------------------------------------------
+if (_GLFW_GGP)
+    list(APPEND glfw_LIBRARIES "m;ggp")
+endif()
+
+#--------------------------------------------------------------------
 # Add the Vulkan loader as a dependency if necessary
 #--------------------------------------------------------------------
 if (GLFW_VULKAN_STATIC)
@@ -321,7 +338,7 @@ configure_file(src/glfw3.pc.in src/glfw3.pc @ONLY)
 #--------------------------------------------------------------------
 add_subdirectory(src)
 
-if (GLFW_BUILD_EXAMPLES)
+if (GLFW_BUILD_EXAMPLES AND NOT GGP)
     add_subdirectory(examples)
 endif()
 

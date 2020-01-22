@@ -44,6 +44,8 @@
 #cmakedefine _GLFW_WAYLAND
 // Define this to 1 if building GLFW for OSMesa
 #cmakedefine _GLFW_OSMESA
+// Define this to 1 if building GLFW for GGP
+#cmakedefine _GLFW_GGP
 
 // Define this to 1 to use Vulkan loader linked statically into application
 #cmakedefine _GLFW_VULKAN_STATIC
