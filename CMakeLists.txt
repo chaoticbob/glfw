@@ -295,7 +295,8 @@ endif()
 # Use GGP for window creation
 #--------------------------------------------------------------------
 if (_GLFW_GGP)
-    list(APPEND glfw_LIBRARIES "m;ggp")
+    list(APPEND glfw_LIBRARIES "ggp")
+    list(APPEND glfw_LIBRARIES "m")
 endif()
 
 #--------------------------------------------------------------------
