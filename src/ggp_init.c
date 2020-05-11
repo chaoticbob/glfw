@@ -172,7 +172,7 @@ int _glfwPlatformInit(void)
 
   initializeKeyCodes(_glfw.ggp.keyCodes);
 
-  GgpInitialize();
+  GgpInitialize(NULL);
 
   _glfw.ggp.streamerEventQueue = GgpEventQueueCreate();
 
